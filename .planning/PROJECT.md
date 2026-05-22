@@ -12,11 +12,12 @@ A governance officer or board member can log in, see their institution's live ri
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Users can authenticate with email/password and institutional role (board, risk officer, audit, department head, admin) — *Validated in Phase 1: Foundation*
+- [x] Role-based access control with least-privilege defaults enforced throughout — *Validated in Phase 1: Foundation (RLS at DB layer + middleware)*
 
 ### Active
 
-- [ ] Users can authenticate with email/password and institutional role (board, risk officer, audit, department head, admin)
+- [ ] Risk registers are linked to strategic objectives with 5×5 likelihood-impact scoring
 - [ ] Risk registers are linked to strategic objectives with 5×5 likelihood-impact scoring
 - [ ] Strategic KPIs with baselines, targets, owners, and period status are tracked per institution
 - [ ] Compliance obligations have due dates, evidence uploads, and attestation workflows
