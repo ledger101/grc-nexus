@@ -1,13 +1,16 @@
 // app/(protected)/dashboard/page.tsx
 // Minimal Phase 1 dashboard — shows authenticated user's name, active role, institution.
 // Full dashboard content delivered in Phase 2+.
+// T-13: Adds MFA status display and regenerate backup codes button for admin/board-member.
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { signOut } from '@/lib/auth/actions'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { MFAStatusSection } from './MFAStatusSection'
 import type { AppRole } from '@/types/auth'
+import { MFA_REQUIRED_ROLES } from '@/types/auth'
 
 export const dynamic = 'force-dynamic'
 
@@ -65,6 +68,14 @@ export default async function DashboardPage() {
     if (institution?.name) institutionName = institution.name
   }
 
+  // Check MFA enrollment status for MFA-required roles
+  const requiresMFA = activeRole ? MFA_REQUIRED_ROLES.includes(activeRole) : false
+  let mfaEnrolled = false
+  if (requiresMFA) {
+    const { data: factors } = await supabase.auth.mfa.listFactors()
+    mfaEnrolled = (factors?.all?.length ?? 0) > 0
+  }
+
   const badgeColor = activeRole ? ROLE_BADGE_COLORS[activeRole] : 'bg-gray-200 text-gray-600'
   const roleLabel = activeRole ? (ROLE_LABELS[activeRole] ?? activeRole) : 'No role assigned'
 
@@ -111,6 +122,11 @@ export default async function DashboardPage() {
             )}
           </div>
         </div>
+
+        {/* MFA status section for roles that require MFA */}
+        {requiresMFA && (
+          <MFAStatusSection mfaEnrolled={mfaEnrolled} />
+        )}
 
         {/* Phase 2+ placeholder */}
         <div className="bg-white rounded-[10px] border border-paper-border shadow-card p-8 text-center">
