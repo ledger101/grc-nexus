@@ -119,16 +119,59 @@ Date: 2026-05-22
 
 ## Traceability
 
-| REQ-ID | Phase | Status |
-|--------|-------|--------|
-| AUTH-01 to AUTH-08 | Phase 1 | Pending |
-| STRAT-01 to STRAT-06 | Phase 2 | Pending |
-| RISK-01 to RISK-08 | Phase 3 | Pending |
-| COMP-01 to COMP-06 | Phase 4 | Pending |
-| BOARD-01 to BOARD-06 | Phase 5 | Pending |
-| AUDIT-01 to AUDIT-05 | Phase 6 | Pending |
-| INCD-01 to INCD-05 | Phase 7 | Pending |
-| RPT-01 to RPT-04 | Phase 8 | Pending |
-| TRAIL-01 to TRAIL-04 | Phase 1 (cross-cutting) | Pending |
+| REQ-ID | Category | Phase | Status |
+|--------|----------|-------|--------|
+| AUTH-01 | Authentication & Access Control | Phase 1 | Pending |
+| AUTH-02 | Authentication & Access Control | Phase 1 | Pending |
+| AUTH-03 | Authentication & Access Control | Phase 1 | Pending |
+| AUTH-04 | Authentication & Access Control | Phase 1 | Pending |
+| AUTH-05 | Authentication & Access Control | Phase 1 | Pending |
+| AUTH-06 | Authentication & Access Control | Phase 1 | Pending |
+| AUTH-07 | Authentication & Access Control | Phase 1 | Pending |
+| AUTH-08 | Authentication & Access Control | Phase 1 | Pending |
+| STRAT-01 | Strategic Planning & KPIs | Phase 2 | Pending |
+| STRAT-02 | Strategic Planning & KPIs | Phase 2 | Pending |
+| STRAT-03 | Strategic Planning & KPIs | Phase 2 | Pending |
+| STRAT-04 | Strategic Planning & KPIs | Phase 2 | Pending |
+| STRAT-05 | Strategic Planning & KPIs | Phase 2 | Pending |
+| STRAT-06 | Strategic Planning & KPIs | Phase 2 | Pending |
+| RISK-01 | Enterprise Risk Management | Phase 3 | Pending |
+| RISK-02 | Enterprise Risk Management | Phase 3 | Pending |
+| RISK-03 | Enterprise Risk Management | Phase 3 | Pending |
+| RISK-04 | Enterprise Risk Management | Phase 3 | Pending |
+| RISK-05 | Enterprise Risk Management | Phase 3 | Pending |
+| RISK-06 | Enterprise Risk Management | Phase 3 | Pending |
+| RISK-07 | Enterprise Risk Management | Phase 3 | Pending |
+| RISK-08 | Enterprise Risk Management | Phase 3 | Pending |
+| COMP-01 | Compliance & Policy Management | Phase 4 | Pending |
+| COMP-02 | Compliance & Policy Management | Phase 4 | Pending |
+| COMP-03 | Compliance & Policy Management | Phase 4 | Pending |
+| COMP-04 | Compliance & Policy Management | Phase 4 | Pending |
+| COMP-05 | Compliance & Policy Management | Phase 4 | Pending |
+| COMP-06 | Compliance & Policy Management | Phase 4 | Pending |
+| BOARD-01 | Board Management & Corporate Governance | Phase 5 | Pending |
+| BOARD-02 | Board Management & Corporate Governance | Phase 5 | Pending |
+| BOARD-03 | Board Management & Corporate Governance | Phase 5 | Pending |
+| BOARD-04 | Board Management & Corporate Governance | Phase 5 | Pending |
+| BOARD-05 | Board Management & Corporate Governance | Phase 5 | Pending |
+| BOARD-06 | Board Management & Corporate Governance | Phase 5 | Pending |
+| AUDIT-01 | Internal Audit & Findings | Phase 6 | Pending |
+| AUDIT-02 | Internal Audit & Findings | Phase 6 | Pending |
+| AUDIT-03 | Internal Audit & Findings | Phase 6 | Pending |
+| AUDIT-04 | Internal Audit & Findings | Phase 6 | Pending |
+| AUDIT-05 | Internal Audit & Findings | Phase 6 | Pending |
+| INCD-01 | Incident & Whistleblower Management | Phase 7 | Pending |
+| INCD-02 | Incident & Whistleblower Management | Phase 7 | Pending |
+| INCD-03 | Incident & Whistleblower Management | Phase 7 | Pending |
+| INCD-04 | Incident & Whistleblower Management | Phase 7 | Pending |
+| INCD-05 | Incident & Whistleblower Management | Phase 7 | Pending |
+| RPT-01 | Reporting & Decision Intelligence | Phase 8 | Pending |
+| RPT-02 | Reporting & Decision Intelligence | Phase 8 | Pending |
+| RPT-03 | Reporting & Decision Intelligence | Phase 8 | Pending |
+| RPT-04 | Reporting & Decision Intelligence | Phase 8 | Pending |
+| TRAIL-01 | Audit Trail & Data Integrity | Phase 1 | Pending |
+| TRAIL-02 | Audit Trail & Data Integrity | Phase 1 | Pending |
+| TRAIL-03 | Audit Trail & Data Integrity | Phase 1 | Pending |
+| TRAIL-04 | Audit Trail & Data Integrity | Phase 1 | Pending |
 
-*Traceability updated by roadmapper — phase assignments above are provisional*
+*Traceability updated by roadmapper on 2026-05-22 — phase assignments complete*
