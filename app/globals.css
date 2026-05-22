@@ -1,0 +1,38 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-playfair: 'Playfair Display', serif;
+  --font-dm-sans: 'DM Sans', sans-serif;
+  --font-dm-mono: 'DM Mono', monospace;
+
+  /* Color tokens */
+  --c-ink: #050D1B;
+  --c-ink-mid: #0B1625;
+  --c-paper: #F3F7FD;
+  --c-paper-line: #D7E2EF;
+  --c-ink-on-paper: #0B1625;
+  --c-ink-on-paper-2: #3A5270;
+  --c-gold: #C8A44A;
+  --c-gold-pale: #F3E2BC;
+  --c-ok: #27AE60;
+  --c-warn: #E67E22;
+  --c-err: #E74C3C;
+}
+
+@layer base {
+  * {
+    @apply border-paper-border;
+  }
+
+  body {
+    @apply bg-paper text-navy-900 font-body;
+  }
+
+  h1, h2, h3 {
+    @apply font-heading;
+  }
+}
