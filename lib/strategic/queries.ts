@@ -14,9 +14,9 @@ export const KPI_PAGE_SIZE = 20 // D-21: 20 rows per page
  */
 export async function getKpisWithReadings(
   supabase: SupabaseClient,
-  { page = 1 }: { page?: number } = {}
+  { page = 1, objectiveId }: { page?: number; objectiveId?: string } = {}
 ) {
-  const { data, count, error } = await supabase
+  let query = supabase
     .from('kpis')
     .select(
       `
@@ -36,6 +36,12 @@ export async function getKpisWithReadings(
       { count: 'exact' }
     )
     .order('created_at', { ascending: false })
+
+  if (objectiveId) {
+    query = query.eq('objective_id', objectiveId)
+  }
+
+  const { data, count, error } = await query
     .range((page - 1) * KPI_PAGE_SIZE, page * KPI_PAGE_SIZE - 1)
 
   return { data: data ?? [], count: count ?? 0, error }

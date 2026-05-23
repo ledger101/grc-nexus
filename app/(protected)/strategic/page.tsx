@@ -4,7 +4,7 @@
 // SECURITY: force-dynamic prevents ISR caching of authenticated responses.
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { getKpisWithReadings, KPI_PAGE_SIZE } from '@/lib/strategic/queries'
+import { getKpisWithReadings, getObjectives, KPI_PAGE_SIZE } from '@/lib/strategic/queries'
 import { KpiGrid } from './KpiGrid'
 import { KpiFilterBar } from './KpiFilterBar'
 import type { AppRole } from '@/types/auth'
@@ -42,8 +42,16 @@ export default async function StrategicPage({
   }
 
   const page = Math.max(1, parseInt(searchParams.page ?? '1', 10))
+  const statusFilter = searchParams.status ?? ''
+  const objectiveId = searchParams.objective ?? ''
 
-  const { data: kpis, count } = await getKpisWithReadings(supabase, { page })
+  const [kpisResult, objectivesResult] = await Promise.all([
+    getKpisWithReadings(supabase, { page, objectiveId: objectiveId || undefined }),
+    getObjectives(supabase),
+  ])
+
+  const { data: kpis, count } = kpisResult
+  const objectives = objectivesResult.data.map((o) => ({ id: o.id, title: o.title }))
 
   return (
     <div>
@@ -55,8 +63,14 @@ export default async function StrategicPage({
           </p>
         </div>
       </div>
-      <KpiFilterBar />
-      <KpiGrid kpis={kpis} totalCount={count ?? 0} page={page} pageSize={KPI_PAGE_SIZE} />
+      <KpiFilterBar objectives={objectives} />
+      <KpiGrid
+        kpis={kpis}
+        totalCount={count ?? 0}
+        page={page}
+        pageSize={KPI_PAGE_SIZE}
+        statusFilter={statusFilter}
+      />
     </div>
   )
 }

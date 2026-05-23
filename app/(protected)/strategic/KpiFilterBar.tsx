@@ -13,12 +13,24 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 
-export function KpiFilterBar() {
+interface Objective {
+  id: string
+  title: string
+}
+
+interface KpiFilterBarProps {
+  objectives?: Objective[]
+}
+
+export function KpiFilterBar({ objectives = [] }: KpiFilterBarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
   const [statusFilter, setStatusFilter] = useState(
     searchParams.get('status') ?? 'all'
+  )
+  const [objectiveFilter, setObjectiveFilter] = useState(
+    searchParams.get('objective') ?? 'all'
   )
 
   function handleApply() {
@@ -26,13 +38,16 @@ export function KpiFilterBar() {
     if (statusFilter && statusFilter !== 'all') {
       params.set('status', statusFilter)
     }
-    // Reset to page 1 when filters change
+    if (objectiveFilter && objectiveFilter !== 'all') {
+      params.set('objective', objectiveFilter)
+    }
     params.set('page', '1')
     router.push(`/strategic?${params.toString()}`)
   }
 
   function handleClear() {
     setStatusFilter('all')
+    setObjectiveFilter('all')
     router.push('/strategic')
   }
 
@@ -54,6 +69,25 @@ export function KpiFilterBar() {
           </SelectContent>
         </Select>
       </div>
+      {/* Objective filter */}
+      {objectives.length > 0 && (
+        <div>
+          <label className="text-[12px] font-medium text-navy-mid block mb-1">Objective</label>
+          <Select value={objectiveFilter} onValueChange={setObjectiveFilter}>
+            <SelectTrigger className="w-[220px] h-9 border-paper-border text-[13px]">
+              <SelectValue placeholder="All objectives" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All objectives</SelectItem>
+              {objectives.map((obj) => (
+                <SelectItem key={obj.id} value={obj.id}>
+                  {obj.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
       {/* Apply / Clear buttons */}
       <div className="flex gap-2 mt-5">
         <Button

@@ -45,6 +45,7 @@ interface KpiGridProps {
   totalCount: number
   page: number
   pageSize: number
+  statusFilter?: string
 }
 
 // Human-readable frequency labels
@@ -55,8 +56,18 @@ const FREQUENCY_LABEL: Record<string, string> = {
   annual: 'Annual',
 }
 
-export function KpiGrid({ kpis, totalCount, page, pageSize }: KpiGridProps) {
+export function KpiGrid({ kpis, totalCount, page, pageSize, statusFilter }: KpiGridProps) {
   const [sorting, setSorting] = useState<SortingState>([])
+
+  // Pre-filter by computed status (status is not a DB column — computed from readings)
+  const filteredKpis = useMemo(() => {
+    if (!statusFilter) return kpis
+    return kpis.filter((kpi) => {
+      const latest = getLatestReading(kpi.kpi_readings ?? [])
+      const status = calculateKpiStatus(latest?.actual_value ?? null, kpi.target_value)
+      return status === statusFilter
+    })
+  }, [kpis, statusFilter])
 
   // columns MUST be wrapped in useMemo to prevent redefinition on every render (v8 requirement)
   const columns = useMemo<ColumnDef<KpiRow>[]>(
@@ -166,7 +177,7 @@ export function KpiGrid({ kpis, totalCount, page, pageSize }: KpiGridProps) {
   )
 
   const table = useReactTable({
-    data: kpis,
+    data: filteredKpis,
     columns,
     state: { sorting },
     onSortingChange: setSorting,
