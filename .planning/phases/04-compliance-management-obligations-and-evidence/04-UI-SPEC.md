@@ -171,8 +171,8 @@ Unchanged from Phase 1 (source: 01-UI-SPEC.md). Phase 4 uses:
 - Evidence upload drop zone (default): `border-2 border-dashed border-paper-border rounded-grc-md` — dashed border signals drop target
 - Evidence upload drop zone (drag-over active): `border-2 border-dashed border-gold rounded-grc-md bg-gold-pale/20` — gold signals valid drop target
 - Evidence upload drop zone (error state): `border-2 border-dashed border-err rounded-grc-md bg-err/5`
-- Evidence list file row: `border border-paper-border rounded-grc-sm p-12px` — consistent with Phase 3 treatment rows
-- Attestation history row: `border border-paper-border rounded-grc-sm p-12px bg-white` — append-only list
+- Evidence list file row: `border border-paper-border rounded-grc-sm p-8px` — consistent with Phase 3 treatment rows
+- Attestation history row: `border border-paper-border rounded-grc-sm p-8px bg-white` — append-only list
 - SHA-256 code block: `bg-paper border border-paper-border rounded-grc-sm p-8px` — monospace code display
 
 ---
@@ -301,7 +301,7 @@ SHA-256 computation: Web Crypto API (`crypto.subtle.digest('SHA-256', buffer)`).
 **File:** `components/compliance/EvidenceFileRow.tsx`
 
 ```
-[FILE ROW — border border-paper-border rounded-grc-sm p-12px bg-white]
+[FILE ROW — border border-paper-border rounded-grc-sm p-8px bg-white]
   [ROW — flex row, align-items start, gap-12px]
 
     [ICON — FileText / FileImage / FileSpreadsheet 20px navy-mid, flex-shrink-0]
@@ -311,7 +311,7 @@ SHA-256 computation: Web Crypto API (`crypto.subtle.digest('SHA-256', buffer)`).
       [ROW 1: flex row, justify-between, align-items start]
         [Left]
           [Filename: DM Sans 14px/400 navy-900, truncate — original_filename]
-          [Meta: DM Sans 14px/400 navy-mid, mt-2px — "[size] · Uploaded [date] by [name]"]
+          [Meta: DM Sans 14px/400 navy-mid, mt-4px — "[size] · Uploaded [date] by [name]"]
         [Right]
           [Download button: outline variant, sm, "Download File", Download icon 14px]
 
@@ -330,7 +330,7 @@ SHA-256 computation: Web Crypto API (`crypto.subtle.digest('SHA-256', buffer)`).
 **File:** `components/compliance/AttestationRow.tsx`
 
 ```
-[ATTESTATION ROW — border border-paper-border rounded-grc-sm p-12px bg-white]
+[ATTESTATION ROW — border border-paper-border rounded-grc-sm p-8px bg-white]
   [ROW — flex row, align-items start, gap-12px]
     [ICON — ShieldCheck 18px, color matched to attestation status (ok/warn/err)]
     [CONTENT — flex-1]
@@ -338,7 +338,7 @@ SHA-256 computation: Web Crypto API (`crypto.subtle.digest('SHA-256', buffer)`).
         [Attestation Status Badge (Component 29 variant — compliant/partially/non)]
         [Attested by: DM Sans 14px/400 navy-mid — "by [Full Name]"]
         [Timestamp: DM Mono 14px/400 navy-mid — "[date] at [time]"]
-      [NOTES: if notes present — DM Sans 14px/400 navy-900, mt-6px, italic]
+      [NOTES: if notes present — DM Sans 14px/400 navy-900, mt-8px, italic]
     [AUDIT BADGE: "Audit recorded" — DM Sans 14px/400 navy-mid, flex-shrink-0]
       [Small badge: bg-paper text-navy-mid border-paper-border — conveys immutability]
 ```
@@ -610,7 +610,7 @@ Additions:
 
   [PAGE HEADER]
     [Title: "Record Attestation" — DM Sans 20px/600 navy-900]
-    [Context card: compact — bg gold-pale/30, border paper-border, rounded-grc-sm, p-12px, mt-8px]
+    [Context card: compact — bg gold-pale/30, border paper-border, rounded-grc-sm, p-8px, mt-8px]
       [Icon + "Attesting:" DM Sans 14px/400 navy-mid] [Obligation title DM Sans 14px/600 navy-900]
       [FrameworkBadge + DueDate DM Mono 14px/400 navy-mid, mt-4px]
 
@@ -651,7 +651,7 @@ Additions:
 
   [PAGE HEADER]
     [Title: "Upload Evidence" — DM Sans 20px/600 navy-900]
-    [Context card: compact — obligation title + FrameworkBadge — bg gold-pale/30 p-12px rounded-grc-sm mt-8px]
+    [Context card: compact — obligation title + FrameworkBadge — bg gold-pale/30 p-8px rounded-grc-sm mt-8px]
 
   [FORM CARD — mt-24px, Card: white, p-32px, shadow-card]
     [EvidenceDropZone — Component 32 — mt-0]
