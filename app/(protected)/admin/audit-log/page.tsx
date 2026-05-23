@@ -8,6 +8,8 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { FilterBar } from './FilterBar'
 import { AuditLogTable } from './AuditLogTable'
 import type { AppRole } from '@/types/auth'
+import type { Database } from '@/types/supabase'
+import { parseAuditMetadata } from '@/lib/audit/filter-utils'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +19,8 @@ export const metadata = {
 
 const ALLOWED_ROLES: AppRole[] = ['admin', 'audit-officer']
 const PAGE_SIZE = 25
+type AuditAction = Database['public']['Enums']['audit_action']
+const AUDIT_ACTIONS: AuditAction[] = ['INSERT', 'UPDATE', 'DELETE', 'AUTH']
 
 export default async function AuditLogPage({
   searchParams,
@@ -39,10 +43,15 @@ export default async function AuditLogPage({
 
   // Parse filter params from URL
   const actor = searchParams.actor ?? ''
-  const action = searchParams.action ?? ''
+  const actionParam = searchParams.action ?? ''
+  const action = AUDIT_ACTIONS.includes(actionParam as AuditAction)
+    ? (actionParam as AuditAction)
+    : ''
   const table = searchParams.table ?? ''
   const from = searchParams.from ?? ''
   const to = searchParams.to ?? ''
+  const moduleFilter = searchParams.module ?? ''
+  const departmentFilter = searchParams.department ?? ''
   const page = Math.max(1, parseInt(searchParams.page ?? '1', 10))
   const offset = (page - 1) * PAGE_SIZE
 
@@ -102,21 +111,36 @@ export default async function AuditLogPage({
       const actorName = profile
         ? `${profile.first_name ?? ''} ${profile.last_name ?? ''}`.trim() || email || 'System'
         : email || 'System'
+      const metadataScope = parseAuditMetadata(e.metadata)
       return {
         ...e,
         actor_name: actorName,
         actor_role: profile?.active_role ?? null,
+        module: metadataScope.module,
+        department: metadataScope.department,
       }
     })
     .filter((e) => {
-      if (!actor) return true
-      return (
+      const actorMatches = !actor || (
         e.actor_name?.toLowerCase().includes(actor.toLowerCase()) ||
         e.actor_id?.toLowerCase().includes(actor.toLowerCase())
       )
+
+      const moduleMatches = !moduleFilter || e.module === moduleFilter
+      const departmentMatches = !departmentFilter || e.department === departmentFilter
+
+      return actorMatches && moduleMatches && departmentMatches
     })
 
   const totalCount = count ?? 0
+
+  const exportParams = new URLSearchParams()
+  if (action) exportParams.set('action', action)
+  if (table) exportParams.set('table', table)
+  if (from) exportParams.set('from', from)
+  if (to) exportParams.set('to', to)
+  if (moduleFilter) exportParams.set('module', moduleFilter)
+  if (departmentFilter) exportParams.set('department', departmentFilter)
 
   return (
     <div>
@@ -128,7 +152,7 @@ export default async function AuditLogPage({
           </p>
         </div>
         <a
-          href="/api/audit/export"
+          href={`/api/audit/export${exportParams.toString() ? `?${exportParams.toString()}` : ''}`}
           className="inline-flex items-center px-4 py-2 rounded-[8px] bg-white border border-paper-border shadow-card text-[13px] font-medium text-navy-900 hover:border-navy-mid/40 hover:shadow-auth transition-all"
         >
           Export CSV

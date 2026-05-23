@@ -19,6 +19,8 @@ const GOVERNANCE_TABLES = [
   'auth_events',
 ]
 
+const GOVERNANCE_MODULES = ['strategic', 'risk', 'compliance', 'board', 'incidents', 'audit']
+
 export function FilterBar() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -28,6 +30,8 @@ export function FilterBar() {
   const [tableName, setTableName] = useState(searchParams.get('table') ?? 'all')
   const [dateFrom, setDateFrom] = useState(searchParams.get('from') ?? '')
   const [dateTo, setDateTo] = useState(searchParams.get('to') ?? '')
+  const [moduleName, setModuleName] = useState(searchParams.get('module') ?? 'all')
+  const [department, setDepartment] = useState(searchParams.get('department') ?? '')
 
   function handleApply() {
     const params = new URLSearchParams()
@@ -36,6 +40,8 @@ export function FilterBar() {
     if (tableName && tableName !== 'all') params.set('table', tableName)
     if (dateFrom) params.set('from', dateFrom)
     if (dateTo) params.set('to', dateTo)
+    if (moduleName && moduleName !== 'all') params.set('module', moduleName)
+    if (department.trim()) params.set('department', department.trim())
     params.set('page', '1')
     router.push(`/admin/audit-log?${params.toString()}`)
   }
@@ -46,6 +52,8 @@ export function FilterBar() {
     setTableName('all')
     setDateFrom('')
     setDateTo('')
+    setModuleName('all')
+    setDepartment('')
     router.push('/admin/audit-log')
   }
 
@@ -115,6 +123,33 @@ export function FilterBar() {
           value={dateTo}
           onChange={(e) => setDateTo(e.target.value)}
           className="w-[150px] h-9 border-paper-border text-[13px]"
+        />
+      </div>
+
+      {/* Module */}
+      <div>
+        <label className="text-[12px] font-medium text-navy-mid block mb-1">Module</label>
+        <Select value={moduleName} onValueChange={setModuleName}>
+          <SelectTrigger className="w-[170px] h-9 border-paper-border text-[13px]">
+            <SelectValue placeholder="All modules" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All modules</SelectItem>
+            {GOVERNANCE_MODULES.map((m) => (
+              <SelectItem key={m} value={m}>{m}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Department */}
+      <div>
+        <label className="text-[12px] font-medium text-navy-mid block mb-1">Department</label>
+        <Input
+          placeholder="dept UUID"
+          value={department}
+          onChange={(e) => setDepartment(e.target.value)}
+          className="w-[190px] h-9 border-paper-border text-[13px]"
         />
       </div>
 

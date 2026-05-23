@@ -4,6 +4,11 @@
 // SECURITY: Returns 401 for unauthenticated or unauthorized access.
 import { NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import type { Database } from '@/types/supabase'
+import { parseAuditMetadata } from '@/lib/audit/filter-utils'
+
+type AuditAction = Database['public']['Enums']['audit_action']
+const AUDIT_ACTIONS: AuditAction[] = ['INSERT', 'UPDATE', 'DELETE', 'AUTH']
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
@@ -25,13 +30,19 @@ export async function GET(request: NextRequest) {
   const tableFilter = url.searchParams.get('table') ?? ''
   const fromFilter = url.searchParams.get('from') ?? ''
   const toFilter = url.searchParams.get('to') ?? ''
+  const moduleFilter = url.searchParams.get('module') ?? ''
+  const departmentFilter = url.searchParams.get('department') ?? ''
 
   let query = supabase
     .from('audit_events')
     .select('occurred_at, actor_id, action, table_name, record_id, event_type, metadata')
     .order('occurred_at', { ascending: false })
 
-  if (actionFilter) query = query.eq('action', actionFilter)
+  const action = AUDIT_ACTIONS.includes(actionFilter as AuditAction)
+    ? (actionFilter as AuditAction)
+    : ''
+
+  if (action) query = query.eq('action', action)
   if (tableFilter) query = query.eq('table_name', tableFilter)
   if (fromFilter) query = query.gte('occurred_at', `${fromFilter}T00:00:00.000Z`)
   if (toFilter) query = query.lte('occurred_at', `${toFilter}T23:59:59.999Z`)
@@ -43,9 +54,19 @@ export async function GET(request: NextRequest) {
   }
 
   // Build CSV
-  const csvHeaders = 'Timestamp,Actor ID,Action,Table,Record ID,Event Type,Metadata\n'
-  const csvRows = (events ?? [])
+  const filteredEvents = (events ?? []).filter((event) => {
+    const metadataScope = parseAuditMetadata(event.metadata)
+
+    const moduleMatches = !moduleFilter || metadataScope.module === moduleFilter
+    const departmentMatches = !departmentFilter || metadataScope.department === departmentFilter
+
+    return moduleMatches && departmentMatches
+  })
+
+  const csvHeaders = 'Timestamp,Actor ID,Action,Table,Record ID,Event Type,Module,Department,Metadata\n'
+  const csvRows = filteredEvents
     .map((e) => {
+      const metadataScope = parseAuditMetadata(e.metadata)
       const meta = e.metadata ? JSON.stringify(e.metadata).replace(/"/g, '""') : ''
       return [
         `"${e.occurred_at}"`,
@@ -54,6 +75,8 @@ export async function GET(request: NextRequest) {
         `"${e.table_name}"`,
         `"${e.record_id ?? ''}"`,
         `"${e.event_type ?? ''}"`,
+        `"${metadataScope.module ?? ''}"`,
+        `"${metadataScope.department ?? ''}"`,
         `"${meta}"`,
       ].join(',')
     })
