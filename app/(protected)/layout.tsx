@@ -4,6 +4,7 @@
 // SECURITY: force-dynamic prevents ISR caching of authenticated responses.
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { ClipboardList } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -46,6 +47,22 @@ export default async function ProtectedLayout({ children }: { children: React.Re
           >
             Strategic
           </Link>
+          <Link
+            href="/risk"
+            className="px-3 py-2 rounded-[6px] text-[14px] font-medium text-navy-900 hover:bg-paper transition-colors"
+          >
+            Risk
+          </Link>
+          {/* Compliance — visible to all roles except dept-head (D-32, D-37) */}
+          {activeRole !== 'dept-head' && (
+            <Link
+              href="/compliance"
+              className="px-3 py-2 rounded-[6px] text-[14px] font-medium text-navy-900 hover:bg-paper transition-colors"
+            >
+              <ClipboardList className="mr-2 inline h-4 w-4" aria-hidden="true" />
+              Compliance
+            </Link>
+          )}
           {/* Admin — role-gated to admin only */}
           {activeRole === 'admin' && (
             <Link
