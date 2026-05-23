@@ -4,6 +4,7 @@ export type AppRole =
   | 'ceo'
   | 'risk-officer'
   | 'audit-officer'
+  | 'compliance-officer'
   | 'dept-head'
 
 export type UserStatus = 'pending' | 'approved' | 'suspended'
@@ -26,8 +27,10 @@ export const ROLE_DESCRIPTIONS: Record<AppRole, string> = {
   'ceo': 'Executive oversight and strategic performance',
   'risk-officer': 'Risk register and treatment management',
   'audit-officer': 'Audit findings and compliance review',
+  'compliance-officer': 'Compliance obligations, evidence, and attestation management',
   'dept-head': 'Departmental performance and compliance',
 }
 
 // Roles that require MFA (used in middleware and UI conditional rendering)
-export const MFA_REQUIRED_ROLES: AppRole[] = ['admin', 'board-member']
+// NOTE: 'admin' intentionally excluded for prototype — MFA enforcement added in production
+export const MFA_REQUIRED_ROLES: AppRole[] = ['board-member']

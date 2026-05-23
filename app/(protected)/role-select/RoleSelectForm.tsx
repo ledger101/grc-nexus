@@ -16,6 +16,7 @@ const ROLE_BADGE_COLORS: Record<AppRole, string> = {
   'ceo': 'bg-purple-700 text-white border-purple-700',
   'risk-officer': 'bg-orange-500 text-white border-orange-500',
   'audit-officer': 'bg-blue-700 text-white border-blue-700',
+  'compliance-officer': 'bg-teal-700 text-white border-teal-700',
   'dept-head': 'bg-green-700 text-white border-green-700',
 }
 
@@ -25,6 +26,7 @@ const ROLE_LABELS: Record<AppRole, string> = {
   'ceo': 'Chief Executive Officer',
   'risk-officer': 'Risk Officer',
   'audit-officer': 'Audit Officer',
+  'compliance-officer': 'Compliance Officer',
   'dept-head': 'Department Head',
 }
 
