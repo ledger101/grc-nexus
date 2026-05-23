@@ -6,6 +6,18 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { getEscalationThreshold } from '@/lib/compliance/compliance-utils'
 import type { ObligationEscalationTarget } from '@/lib/compliance/queries'
 
+/**
+ * HTML-escape user-supplied strings before embedding in email HTML (ME-04).
+ * Prevents stored XSS via obligation title or framework values rendered in email clients.
+ */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 /**
@@ -82,10 +94,10 @@ export async function sendComplianceEscalationEmails(
         subject: subjectMap[threshold],
         html: `
           <p>This is an automated compliance alert from GRC-Nexus.</p>
-          <p><strong>Obligation:</strong> ${obligation.title}</p>
-          <p><strong>Framework:</strong> ${obligation.framework.toUpperCase()}</p>
-          <p><strong>Due Date:</strong> ${obligation.due_date}</p>
-          <p><strong>Status:</strong> ${threshold.replace(/_/g, ' ')}</p>
+          <p><strong>Obligation:</strong> ${escapeHtml(obligation.title)}</p>
+          <p><strong>Framework:</strong> ${escapeHtml(obligation.framework.toUpperCase())}</p>
+          <p><strong>Due Date:</strong> ${escapeHtml(obligation.due_date)}</p>
+          <p><strong>Status:</strong> ${escapeHtml(threshold.replace(/_/g, ' '))}</p>
           <p>Please log in to GRC-Nexus to update the compliance status or attest this obligation.</p>
         `,
       })
