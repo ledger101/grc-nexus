@@ -19,7 +19,7 @@ A governance officer or board member can log in, see their institution's live ri
 
 - [ ] Risk registers are linked to strategic objectives with 5×5 likelihood-impact scoring
 - [ ] Risk registers are linked to strategic objectives with 5×5 likelihood-impact scoring
-- [ ] Strategic KPIs with baselines, targets, owners, and period status are tracked per institution
+- [x] Strategic KPIs with baselines, targets, owners, and period status are tracked per institution — *Validated in Phase 2: Strategic Planning*
 - [ ] Compliance obligations have due dates, evidence uploads, and attestation workflows
 - [ ] Board meeting lifecycle: agenda, pack distribution, resolutions, and action tracking
 - [ ] Internal audit findings are managed with root-cause and remediation tracking
