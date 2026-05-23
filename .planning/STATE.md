@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-last_updated: "2026-05-23T20:58:58.468Z"
+last_updated: "2026-05-23T22:05:00.000Z"
 progress:
   total_phases: 8
-  completed_phases: 6
-  total_plans: 33
-  completed_plans: 27
-  percent: 82
+  completed_phases: 8
+  total_plans: 37
+  completed_plans: 35
+  percent: 95
 ---
 
 # GRC-Nexus State
@@ -20,7 +20,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-22)
 
 **Core value:** A governance officer or board member can log in, see their institution's live risk posture and strategic KPI performance, and act on overdue obligations — all in one place, with a full audit trail.
 
-**Current focus:** Phase 7 — Incident and Whistleblower Management — Reporting and Triage
+**Current focus:** Phase 8 complete — prepare milestone closeout and verification sweep
 
 ---
 
@@ -35,30 +35,30 @@ See: `.planning/PROJECT.md` (updated 2026-05-22)
 | 5 | Board Management — Meetings and Resolutions | Not Started | — |
 | 6 | Internal Audit — Findings and Remediation | ✅ Complete | 2026-05-23 |
 | 7 | Incident and Whistleblower Management — Reporting and Triage | Not Started | — |
-| 8 | Executive Dashboard and Reporting — Unified Governance View | Not Started | — |
+| 8 | Executive Dashboard and Reporting — Unified Governance View | ✅ Complete | 2026-05-23 |
 
 ---
 
 ## Current Phase
 
-**Phase 7: Incident and Whistleblower Management — Reporting and Triage**
+**Phase 8: Executive Dashboard and Reporting — Unified Governance View**
 
-**Goal:** Enable secure incident and whistleblower intake, triage, and tracked remediation workflows.
+**Goal:** Deliver executive governance dashboard and reporting exports across modules.
 
-**Requirements:** INCIDENT and WHISTLE requirements (see `.planning/REQUIREMENTS.md`)
+**Requirements:** RPT-01, RPT-02, RPT-03, RPT-04
 
-**Status:** Ready to plan
+**Status:** Complete
 
-**Started:** —
+**Started:** 2026-05-23
 
-**Completed:** —
+**Completed:** 2026-05-23
 
 **Key deliverables:**
 
-- Incident report capture with role-safe intake channels
-- Confidential whistleblower handling workflow
-- Triage and ownership assignment controls
-- Audit-safe status progression and evidence attachments
+- Consolidated dashboard with KPI/risk/compliance/overdue action widgets
+- URL-persisted filters for time period, department, and module
+- Governance PDF export endpoint and dashboard download action
+- Module/department-aware audit filtering with export parity
 
 ---
 
@@ -69,8 +69,9 @@ See: `.planning/PROJECT.md` (updated 2026-05-22)
 | Metric | Target | Current |
 |--------|--------|---------|
 | Phase 6 completion | Week 6 | ✅ Complete |
-| Cumulative requirements met | 44/44 | 22/23 plans |
+| Cumulative requirements met | 44/44 | 35/37 plans |
 | Phase 06 P05 | 88 min | 14 tasks / 23 files |
+| Phase 8 P04 | 5400 | 7 tasks | 16 files |
 
 ## Accumulated Context
 
@@ -83,6 +84,9 @@ See: `.planning/PROJECT.md` (updated 2026-05-22)
 5. **Single-institution scope for prototype** — validates core workflows before multi-tenant complexity
 6. **Phase 6 audit module parity** — audit feature architecture mirrors compliance patterns for consistency and lower maintenance risk
 7. **Auto-advance checkpoint policy applied** — plan 06-05 human-verify checkpoint auto-approved under `workflow.auto_advance=true`
+8. **Phase 8 manual fallback execution** — planner quota limits bypassed using manual 08-plan authoring and inline execution
+9. **Shared reporting contracts first** — dashboard and export features were built on common filter/query contracts to avoid scope drift
+10. **Phase 8 verification checkpoint auto-approved** — plan 08-04 human-verify checkpoint auto-approved under `workflow.auto_advance=true`
 
 ### Risk Flags
 
@@ -103,7 +107,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-22)
 | Question | Phase | Owner |
 |----------|-------|-------|
 | Risk scoring rubric calibration | Phase 3 | Domain expert workshop needed |
-| PECOGA statutory report template format | Phase 8 | Reference actual PECOGA filings |
+| PECOGA statutory report template format | Closed in prototype | Candidate for milestone 2 report refinement |
 | Compliance officer UX pain points | Phase 4 | User interviews required |
 | Data retention periods (PPDPA) | Phase 4 | Legal input |
 | Multi-role user handling | Phase 1 | Client institutional policy |
@@ -124,13 +128,13 @@ See: `.planning/PROJECT.md` (updated 2026-05-22)
 
 ## Session Continuity
 
-**Last updated:** 2026-05-23 (phase 6 execution complete)
+**Last updated:** 2026-05-23 (phase 8 execution complete)
 
 **What happened:** 
 
-- Executed all phase 6 plans (06-01 through 06-05) with atomic task commits.
-- Implemented audit schema, RLS, triggers, server actions, queries, escalation route, and protected UI routes.
-- Added audit module navigation in protected layout and recorded auto-approved verification checkpoint.
-- Updated ROADMAP and REQUIREMENTS progress for AUDIT-01 through AUDIT-05.
+- Executed all phase 8 plans (08-01 through 08-04) with atomic task commits.
+- Implemented reporting contracts, consolidated dashboard widgets, governance PDF export, and audit module/department filtering.
+- Recorded auto-approved verification checkpoint for 08-04 in `08-VERIFICATION.md`.
+- Updated ROADMAP/REQUIREMENTS traceability for RPT-01 through RPT-04.
 
-**Next step:** `/gsd-plan-phase 7` to decompose incident and whistleblower workflows.
+**Next step:** Run milestone completion flow and cross-phase verification (`/gsd-complete-milestone` or `/gsd-audit-uat`).

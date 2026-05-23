@@ -74,10 +74,10 @@ Date: 2026-05-22
 
 ### Reporting & Decision Intelligence
 
-- [ ] **RPT-01**: Executive dashboard shows consolidated view: KPI summary, risk heatmap, compliance posture, top overdue actions
-- [ ] **RPT-02**: Users can filter dashboard by time period, department, and module
-- [ ] **RPT-03**: System can export a governance summary report as PDF (risk heatmap + KPI status + compliance posture)
-- [ ] **RPT-04**: Audit trail is viewable by admin and audit officers as a filterable log of all governance events
+- [x] **RPT-01**: Executive dashboard shows consolidated view: KPI summary, risk heatmap, compliance posture, top overdue actions
+- [x] **RPT-02**: Users can filter dashboard by time period, department, and module
+- [x] **RPT-03**: System can export a governance summary report as PDF (risk heatmap + KPI status + compliance posture)
+- [x] **RPT-04**: Audit trail is viewable by admin and audit officers as a filterable log of all governance events
 
 ### Audit Trail & Data Integrity
 
@@ -165,10 +165,10 @@ Date: 2026-05-22
 | INCD-03 | Incident & Whistleblower Management | Phase 7 | Complete |
 | INCD-04 | Incident & Whistleblower Management | Phase 7 | Complete |
 | INCD-05 | Incident & Whistleblower Management | Phase 7 | Complete |
-| RPT-01 | Reporting & Decision Intelligence | Phase 8 | Pending |
-| RPT-02 | Reporting & Decision Intelligence | Phase 8 | Pending |
-| RPT-03 | Reporting & Decision Intelligence | Phase 8 | Pending |
-| RPT-04 | Reporting & Decision Intelligence | Phase 8 | Pending |
+| RPT-01 | Reporting & Decision Intelligence | Phase 8 | Complete |
+| RPT-02 | Reporting & Decision Intelligence | Phase 8 | Complete |
+| RPT-03 | Reporting & Decision Intelligence | Phase 8 | Complete |
+| RPT-04 | Reporting & Decision Intelligence | Phase 8 | Complete |
 | TRAIL-01 | Audit Trail & Data Integrity | Phase 1 | Pending |
 | TRAIL-02 | Audit Trail & Data Integrity | Phase 1 | Pending |
 | TRAIL-03 | Audit Trail & Data Integrity | Phase 1 | Pending |
