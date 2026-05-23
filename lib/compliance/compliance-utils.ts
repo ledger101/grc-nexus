@@ -1,6 +1,6 @@
 // lib/compliance/compliance-utils.ts
 // Pure compliance business logic helpers. No framework imports (Next.js, React, Supabase).
-import { isPast, differenceInDays } from 'date-fns'
+import { differenceInDays } from 'date-fns'
 import type { ObligationStatus } from '@/types/compliance'
 
 // Badge CSS classes — matches tailwind.config.ts tokens (D-23, UI-SPEC Component 29)
@@ -17,10 +17,16 @@ export const OBLIGATION_STATUS_BADGE: Record<ObligationStatus, string> = {
  * Returns true if obligation is past due date and not already compliant/waived/overdue.
  * Compliant and waived obligations are considered resolved — they are not overdue.
  * Overdue is already set — no need to double-flag.
+ *
+ * Compares YYYY-MM-DD date strings so that an obligation due TODAY is not considered
+ * overdue until the calendar day has passed (ME-01: isPast fires at midnight local time
+ * which incorrectly marks "due today" obligations as overdue all day).
  */
 export function isObligationOverdue(status: ObligationStatus, dueDate: string | Date): boolean {
   if (status === 'compliant' || status === 'waived' || status === 'overdue') return false
-  return isPast(new Date(dueDate))
+  const today = new Date().toISOString().slice(0, 10)
+  const due = typeof dueDate === 'string' ? dueDate.slice(0, 10) : dueDate.toISOString().slice(0, 10)
+  return due < today
 }
 
 /**
