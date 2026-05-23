@@ -14,19 +14,23 @@ A governance officer or board member can log in, see their institution's live ri
 
 - [x] Users can authenticate with email/password and institutional role (board, risk officer, audit, department head, admin) — *Validated in Phase 1: Foundation*
 - [x] Role-based access control with least-privilege defaults enforced throughout — *Validated in Phase 1: Foundation (RLS at DB layer + middleware)*
+- [x] Strategic KPIs with baselines, targets, owners, and period status are tracked per institution — *Validated in Phase 2: Strategic Planning*
+- [x] Internal audit findings are managed with root-cause and remediation tracking — *Validated in Phase 6: Internal Audit*
+- [x] Incident/whistleblower intake with triage and confidential case workflows — *Validated in Phase 7: Incident and Whistleblower Management*
 
 ### Active
 
 - [ ] Risk registers are linked to strategic objectives with 5×5 likelihood-impact scoring
 - [ ] Risk registers are linked to strategic objectives with 5×5 likelihood-impact scoring
-- [x] Strategic KPIs with baselines, targets, owners, and period status are tracked per institution — *Validated in Phase 2: Strategic Planning*
 - [ ] Compliance obligations have due dates, evidence uploads, and attestation workflows
 - [ ] Board meeting lifecycle: agenda, pack distribution, resolutions, and action tracking
-- [ ] Internal audit findings are managed with root-cause and remediation tracking
 - [ ] Executive dashboard shows live risk heatmap, compliance posture, and KPI summary
-- [ ] Incident/whistleblower intake with triage and confidential case workflows
 - [ ] Statutory reports can be generated and exported
 - [ ] Role-based access control with least-privilege defaults enforced throughout
+
+## Current State
+
+Phase 7 is complete: incident intake (named and anonymous), triage assignment, status progression, closure enforcement, and protected navigation are implemented. Current focus moves to Phase 8 for unified executive dashboard and reporting.
 
 ### Out of Scope
 
@@ -81,4 +85,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-22 after initialization*
+*Last updated: 2026-05-23 after Phase 7 completion*

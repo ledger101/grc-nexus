@@ -66,11 +66,11 @@ Date: 2026-05-22
 
 ### Incident & Whistleblower Management
 
-- [ ] **INCD-01**: Any user can submit an incident report (named or anonymous) via a web form
-- [ ] **INCD-02**: Anonymous reports do not store user identity in any table, including audit logs
-- [ ] **INCD-03**: Incident cases are visible only to assigned investigators and admins (role-segregated RLS)
-- [ ] **INCD-04**: Investigators can triage, assign, escalate, and close incident cases with status tracking
-- [ ] **INCD-05**: Case closure requires a resolution summary and is logged as an immutable record
+- [x] **INCD-01**: Any user can submit an incident report (named or anonymous) via a web form
+- [x] **INCD-02**: Anonymous reports do not store user identity in any table, including audit logs
+- [x] **INCD-03**: Incident cases are visible only to assigned investigators and admins (role-segregated RLS)
+- [x] **INCD-04**: Investigators can triage, assign, escalate, and close incident cases with status tracking
+- [x] **INCD-05**: Case closure requires a resolution summary and is logged as an immutable record
 
 ### Reporting & Decision Intelligence
 
@@ -160,11 +160,11 @@ Date: 2026-05-22
 | AUDIT-03 | Internal Audit & Findings | Phase 6 | Pending |
 | AUDIT-04 | Internal Audit & Findings | Phase 6 | Pending |
 | AUDIT-05 | Internal Audit & Findings | Phase 6 | Pending |
-| INCD-01 | Incident & Whistleblower Management | Phase 7 | Pending |
-| INCD-02 | Incident & Whistleblower Management | Phase 7 | Pending |
-| INCD-03 | Incident & Whistleblower Management | Phase 7 | Pending |
-| INCD-04 | Incident & Whistleblower Management | Phase 7 | Pending |
-| INCD-05 | Incident & Whistleblower Management | Phase 7 | Pending |
+| INCD-01 | Incident & Whistleblower Management | Phase 7 | Complete |
+| INCD-02 | Incident & Whistleblower Management | Phase 7 | Complete |
+| INCD-03 | Incident & Whistleblower Management | Phase 7 | Complete |
+| INCD-04 | Incident & Whistleblower Management | Phase 7 | Complete |
+| INCD-05 | Incident & Whistleblower Management | Phase 7 | Complete |
 | RPT-01 | Reporting & Decision Intelligence | Phase 8 | Pending |
 | RPT-02 | Reporting & Decision Intelligence | Phase 8 | Pending |
 | RPT-03 | Reporting & Decision Intelligence | Phase 8 | Pending |

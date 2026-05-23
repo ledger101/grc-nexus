@@ -48,6 +48,15 @@ This roadmap follows a dependency-driven build order: Foundation (auth + RLS + a
 
 **UI hint**: yes
 
+**Plans:** 5 plans
+
+Plans:
+- [x] 07-01-PLAN.md — Incident schema/RLS/trigger migrations + incident types + Zod schemas + utility contracts
+- [x] 07-02-PLAN.md — Incident server actions + queries + escalation service + intake/escalate API routes
+- [x] 07-03-PLAN.md — Intake UI (named/anonymous report form) + submission confirmation flow
+- [x] 07-04-PLAN.md — Investigator dashboard/list/detail + triage assignment + status/closure workflow UI
+- [x] 07-05-PLAN.md — Incident nav integration + end-to-end human verification checkpoint
+
 
 
 ---
@@ -349,15 +358,15 @@ Plans:
 
 | AUDIT-05 | Internal Audit & Findings | Phase 6 | Pending |
 
-| INCD-01 | Incident & Whistleblower Management | Phase 7 | Pending |
+| INCD-01 | Incident & Whistleblower Management | Phase 7 | Complete |
 
-| INCD-02 | Incident & Whistleblower Management | Phase 7 | Pending |
+| INCD-02 | Incident & Whistleblower Management | Phase 7 | Complete |
 
-| INCD-03 | Incident & Whistleblower Management | Phase 7 | Pending |
+| INCD-03 | Incident & Whistleblower Management | Phase 7 | Complete |
 
-| INCD-04 | Incident & Whistleblower Management | Phase 7 | Pending |
+| INCD-04 | Incident & Whistleblower Management | Phase 7 | Complete |
 
-| INCD-05 | Incident & Whistleblower Management | Phase 7 | Pending |
+| INCD-05 | Incident & Whistleblower Management | Phase 7 | Complete |
 
 | RPT-01 | Reporting & Decision Intelligence | Phase 8 | Pending |
 
@@ -405,7 +414,7 @@ Plans:
 
 | 6 | Internal Audit | 5/5 | Complete   | 2026-05-23 |
 
-| 7 | Incident & Whistleblower | 5 | Not Started | â”œÃ³Î“Ã©Â¼Î“Ã‡Â¥ |
+| 7 | Incident & Whistleblower | 5/5 | Complete    | 2026-05-23 |
 
 | 8 | Executive Dashboard & Reporting | 4 | Not Started | â”œÃ³Î“Ã©Â¼Î“Ã‡Â¥ |
 

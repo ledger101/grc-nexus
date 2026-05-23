@@ -1,77 +1,56 @@
 ---
 phase: 07-incident-and-whistleblower-management-reporting-and-triage
 plan: 01
-subsystem: database
-tags: [supabase, postgres, rls, zod, incidents]
+subsystem: incidents-foundation
+tags: [schema, rls, triggers, contracts]
 requires: []
 provides:
-  - Incident domain contracts and validation schemas
-  - Incident/evidence schema migration with indexes and references
-  - RLS, anonymous constraints, and immutable audit triggers for incident tables
-affects: [07-02, 07-03, 07-04, incident-module]
+  - Strict incident lifecycle transition guard for service layer
+  - Confirmed incident schema, RLS, and trigger migrations are synced in Supabase
+affects: [incident-intake, triage, closure]
 tech-stack:
   added: []
-  patterns: [institution-scoped RLS, anonymous checks, immutable audit triggers]
+  patterns: [sql-first migration split, zod domain contracts]
 key-files:
-  created:
-    - types/incidents.ts
-    - lib/schemas/incidents.ts
+  created: []
+  modified:
     - lib/incidents/incident-utils.ts
-    - supabase/migrations/20260523000026_incident_schema.sql
-    - supabase/migrations/20260523000027_incident_rls.sql
-    - supabase/migrations/20260523000028_incident_triggers.sql
-    - tests/incidents/incident-contracts.test.ts
-  modified: []
 key-decisions:
-  - "Enforced absolute anonymity checks using a Postgres table constraint check on `incident_cases`."
-  - "Attached standard immutable audit triggers using the existing `audit.attach_audit_trigger` utility."
+  - "Enforce legal status progression path in utility guard and keep closed as terminal."
 patterns-established:
-  - "Incident module schema design splits migrations into enums/tables, RLS policies, and triggers."
-  - "Validation schemas are defined with Zod and colocated under lib/schemas."
+  - "Incident workflow transitions are governed by a single pure function used by actions and forms."
 requirements-completed: [INCD-01, INCD-02, INCD-03]
-duration: 15min
+duration: 18min
 completed: 2026-05-23
 ---
 
-# Phase 7 Plan 01: Foundation Contracts and DB Security Summary
+# Phase 7 Plan 01: Foundation Schema and Contracts Summary
 
-**Incident and whistleblower persistence foundation shipped with strict TypeScript/Zod contracts, DB-level anonymity validation, investigator RLS policies, and immutable write auditing.**
+**Phase-7 foundation was validated and hardened by enforcing strict status transitions and confirming incident schema/RLS/trigger migrations are already applied and in sync.**
 
 ## Performance
-
-- **Duration:** 15 min
-- **Started:** 2026-05-23T22:35:00Z
-- **Completed:** 2026-05-23T22:50:00Z
+- **Duration:** 18 min
 - **Tasks:** 3
-- **Files modified:** 7
+- **Files modified:** 1
 
 ## Accomplishments
-- Created incident domain types, labels, and transition/SLA helpers for downstream service/UI work.
-- Created incident schema migration for cases, events, and evidence with operational indexes.
-- Enforced absolute database-level whistleblower safety via a `chk_anonymity_integrity` table constraint.
-- Configured RLS policies for investigator access control and enabled immutable trigger auditing on all tables.
-- Wrote and passed comprehensive unit tests covering enums, schemas, and transition paths.
+- Updated `isValidIncidentStatusTransition` to enforce `new -> assigned -> in_investigation -> escalated -> closed` with controlled reassignment flow.
+- Verified incident migrations are synchronized (`npx supabase migration list`) and remote database is up to date (`npx supabase db push`).
+- Confirmed tracked contract artifacts exist: `types/incidents.ts`, `lib/schemas/incidents.ts`, and three incident migration files.
 
 ## Task Commits
-1. **Task 1: Define incident contracts first** - Completed files `types/incidents.ts`, `lib/schemas/incidents.ts`, `lib/incidents/incident-utils.ts` and `tests/incidents/incident-contracts.test.ts`
-2. **Task 2: Add incident schema migration** - Completed file `supabase/migrations/20260523000026_incident_schema.sql`
-3. **Task 3: Add RLS and trigger migrations** - Completed files `supabase/migrations/20260523000027_incident_rls.sql` and `supabase/migrations/20260523000028_incident_triggers.sql`
+1. **Task 1: Define incident guards/contracts** - `c6f1441` (fix)
+2. **Task 2: Incident schema migration verification** - `No code diff (already present and synced)`
+3. **Task 3: RLS/trigger migration verification** - `No code diff (already present and synced)`
 
 ## Files Created/Modified
-- `types/incidents.ts` - Category/status/visibility types, labels, and interfaces.
-- `lib/schemas/incidents.ts` - Zod schemas for intake, triage, closure, and evidence.
-- `lib/incidents/incident-utils.ts` - Valid transition checks, SLA calculators, and storage path generator.
-- `supabase/migrations/20260523000026_incident_schema.sql` - Incidents schema, enums, indexes, and storage bucket.
-- `supabase/migrations/20260523000027_incident_rls.sql` - Anonymity constraint, cases/events/evidence RLS, and storage rules.
-- `supabase/migrations/20260523000028_incident_triggers.sql` - Trigger attachments.
-- `tests/incidents/incident-contracts.test.ts` - Contract validation tests.
+- `lib/incidents/incident-utils.ts` - strict lifecycle transition logic.
 
 ## Decisions Made
-- Implemented a database constraint to guarantee that no write can store personal info if `is_anonymous` is true.
-- Configured public insert access for incidents to support unauthenticated whistleblower submissions safely.
+- Tightened lifecycle transitions to eliminate direct close-from-new and close-from-assigned paths.
 
 ## Deviations from Plan
-None.
+None - plan executed as written; schema/rls/trigger migrations already existed and were validated instead of re-authored.
 
 ## Issues Encountered
 None.
@@ -83,5 +62,6 @@ None.
 None.
 
 ## Self-Check: PASSED
-- Verified 7 new/modified files exist.
-- Verified TypeScript types compile and all 132 tests pass.
+- Verified modified file `lib/incidents/incident-utils.ts` exists.
+- Verified task commit `c6f1441` exists in git history.
+- Verified migrations `20260523000026`, `20260523000027`, and `20260523000028` are applied and in sync.
