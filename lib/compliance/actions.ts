@@ -326,7 +326,10 @@ export async function attestObligation(
 
     if (updateError) {
       console.error('[attestObligation] Status update error:', updateError)
-      // Non-fatal for audit trail — attestation row already inserted
+      // Attestation row is already inserted (append-only audit trail is intact),
+      // but the denormalised status column was not updated — surface this to the caller
+      // so the user knows to refresh and verify rather than seeing a silent stale state (HI-02)
+      return { error: 'Attestation recorded but status update failed. Please refresh and verify.' }
     }
 
     revalidateCompliancePaths(obligationId)
