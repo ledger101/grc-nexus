@@ -11,13 +11,13 @@ export function isValidIncidentStatusTransition(current: IncidentStatus, next: I
 
   switch (current) {
     case 'new':
-      return next === 'assigned' || next === 'closed'
+      return next === 'assigned'
     case 'assigned':
-      return next === 'in_investigation' || next === 'closed'
+      return next === 'in_investigation'
     case 'in_investigation':
-      return next === 'escalated' || next === 'closed' || next === 'assigned'
+      return next === 'assigned' || next === 'escalated'
     case 'escalated':
-      return next === 'closed' || next === 'in_investigation'
+      return next === 'in_investigation' || next === 'closed'
     case 'closed':
       return false // Terminal state
     default:
