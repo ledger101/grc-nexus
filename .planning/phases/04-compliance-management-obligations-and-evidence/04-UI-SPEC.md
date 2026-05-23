@@ -26,8 +26,8 @@ created: 2026-05-23
 | Preset | default style, slate base color, CSS variables (confirmed: components.json) |
 | Component library | Radix UI (via shadcn/ui) |
 | Icon library | lucide-react (bundled with shadcn/ui) |
-| Font (heading) | Playfair Display — serif, 700/600 weights |
-| Font (body/UI) | DM Sans — sans-serif, 400/500/600 weights |
+| Font (heading) | Playfair Display — serif, 600 weight |
+| Font (body/UI) | DM Sans — sans-serif, 400/600 weights |
 | Font (mono/data) | DM Mono — for SHA-256 hashes, timestamps, file sizes, record IDs |
 
 **Source:** Phase 1 UI-SPEC (design system baseline); Phase 3 UI-SPEC (component pattern baseline); tailwind.config.ts (verified 2026-05-23).
@@ -56,28 +56,31 @@ Phase 4 exceptions:
 - Evidence upload drop zone: 120px minimum height (sufficient drag-and-drop target, exceeds WCAG 2.5.5)
 - Filter bar inputs: 44px height (WCAG touch target minimum — inherited from prior phases)
 - Attestation confirmation dialog: max-w-480px (inherits Phase 1 dialog sizing)
-- SHA-256 hash display: full 64-char hex fits in DM Mono at 12px within a code block; no truncation — integrity value must be fully visible
+- SHA-256 hash display: full 64-char hex fits in DM Mono at 14px within a code block; no truncation — integrity value must be fully visible
 
 ---
 
 ## Typography
 
-Unchanged from Phase 1 (source: 01-UI-SPEC.md):
+Unchanged from Phase 1 (source: 01-UI-SPEC.md), with Phase 4 weight consolidation applied:
 
 | Role | Size | Weight | Line Height | Font |
 |------|------|--------|-------------|------|
-| Display heading | 28px | 700 | 1.2 | Playfair Display |
+| Display heading | 28px | 600 | 1.2 | Playfair Display |
 | Section heading | 20px | 600 | 1.3 | DM Sans |
 | Body | 16px | 400 | 1.5 | DM Sans |
-| Label / UI text | 14px | 500 | 1.4 | DM Sans |
-| Mono / data | 13px | 400 | 1.4 | DM Mono |
+| Label / UI text + Mono / data | 14px | 400 | 1.4 | DM Sans / DM Mono |
+
+**Weight consolidation (Phase 4 fix):** Exactly 2 weights in use — 400 (regular) and 600 (semibold). Weight 500 is removed; all elements previously at 500 use 400. Weight 700 is removed; Playfair Display display headings use 600.
+
+**Size consolidation (Phase 4 fix):** Exactly 4 sizes — 28px, 20px, 16px, 14px. Size 13px is removed; all elements previously at 13px (DM Mono data, file sizes, timestamps, framework badge labels) use 14px. Size 12px is removed; SHA-256 hash display uses 14px DM Mono.
 
 Phase 4 additions:
 - Compliance posture percentage (% met): DM Mono 28px/600, color matched to semantic status (ok/warn/err) — large, prominent stat display
-- SHA-256 hash value: DM Mono 12px/400, color navy-mid (#3A5270), wraps within a `<code>` element — full 64 chars must be visible
-- File size display: DM Mono 13px/400, color navy-mid — displayed alongside original filename in evidence list
-- Attestation timestamp: DM Mono 13px/400, color navy-mid — "Attested [date] by [name]" pattern
-- Framework badge label: DM Sans 12px/500 — compact badge text for regulatory framework chips
+- SHA-256 hash value: DM Mono 14px/400, color navy-mid (#3A5270), wraps within a `<code>` element — full 64 chars must be visible
+- File size display: DM Mono 14px/400, color navy-mid — displayed alongside original filename in evidence list
+- Attestation timestamp: DM Mono 14px/400, color navy-mid — "Attested [date] by [name]" pattern
+- Framework badge label: DM Sans 14px/400 — compact badge text for regulatory framework chips
 
 ---
 
@@ -114,12 +117,12 @@ Full token set unchanged from Phase 1 (source: tailwind.config.ts, verified 2026
 
 | Status | Badge Class |
 |--------|------------|
-| pending | `bg-paper text-navy-mid border border-paper-border rounded-grc-sm px-8px py-4px text-[13px]` |
-| compliant | `bg-ok/10 text-ok border border-ok/30 rounded-grc-sm px-8px py-4px text-[13px]` |
-| partially_compliant | `bg-warn/10 text-warn border border-warn/30 rounded-grc-sm px-8px py-4px text-[13px]` |
-| non_compliant | `bg-err/10 text-err border border-err/30 rounded-grc-sm px-8px py-4px text-[13px] font-semibold` |
-| overdue | `bg-err/30 text-err border border-err/50 rounded-grc-sm px-8px py-4px text-[13px] font-semibold` |
-| waived | `bg-gray-100 text-gray-500 border border-gray-200 rounded-grc-sm px-8px py-4px text-[13px]` |
+| pending | `bg-paper text-navy-mid border border-paper-border rounded-grc-sm px-8px py-4px text-[14px]` |
+| compliant | `bg-ok/10 text-ok border border-ok/30 rounded-grc-sm px-8px py-4px text-[14px]` |
+| partially_compliant | `bg-warn/10 text-warn border border-warn/30 rounded-grc-sm px-8px py-4px text-[14px]` |
+| non_compliant | `bg-err/10 text-err border border-err/30 rounded-grc-sm px-8px py-4px text-[14px] font-semibold` |
+| overdue | `bg-err/30 text-err border border-err/50 rounded-grc-sm px-8px py-4px text-[14px] font-semibold` |
+| waived | `bg-gray-100 text-gray-500 border border-gray-200 rounded-grc-sm px-8px py-4px text-[14px]` |
 
 Non-Compliant and Overdue use `font-semibold` (600) to elevate urgency — mirrors Critical/Overdue pattern from Phase 3.
 
@@ -127,22 +130,22 @@ Non-Compliant and Overdue use `font-semibold` (600) to elevate urgency — mirro
 
 | Attestation Status | Badge Class |
 |--------------------|------------|
-| compliant | `bg-ok/10 text-ok border border-ok/30 rounded-grc-sm px-8px py-4px text-[13px]` |
-| partially_compliant | `bg-warn/10 text-warn border border-warn/30 rounded-grc-sm px-8px py-4px text-[13px]` |
-| non_compliant | `bg-err/10 text-err border border-err/30 rounded-grc-sm px-8px py-4px text-[13px] font-semibold` |
+| compliant | `bg-ok/10 text-ok border border-ok/30 rounded-grc-sm px-8px py-4px text-[14px]` |
+| partially_compliant | `bg-warn/10 text-warn border border-warn/30 rounded-grc-sm px-8px py-4px text-[14px]` |
+| non_compliant | `bg-err/10 text-err border border-err/30 rounded-grc-sm px-8px py-4px text-[14px] font-semibold` |
 
 **Regulatory framework badge colors (Phase 4 specific — no new tokens; uses Tailwind color palette):**
 
 | Framework | Badge Class |
 |-----------|------------|
-| pecoga | `bg-purple-50 text-purple-700 border border-purple-200 rounded-grc-sm px-8px py-4px text-[12px] font-medium` |
-| ppdpa | `bg-blue-50 text-blue-700 border border-blue-200 rounded-grc-sm px-8px py-4px text-[12px] font-medium` |
-| nds2 | `bg-teal-50 text-teal-700 border border-teal-200 rounded-grc-sm px-8px py-4px text-[12px] font-medium` |
-| iso_37000 | `bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-grc-sm px-8px py-4px text-[12px] font-medium` |
-| king_iv | `bg-amber-50 text-amber-700 border border-amber-200 rounded-grc-sm px-8px py-4px text-[12px] font-medium` |
-| ipsas | `bg-cyan-50 text-cyan-700 border border-cyan-200 rounded-grc-sm px-8px py-4px text-[12px] font-medium` |
-| pfma | `bg-orange-50 text-orange-700 border border-orange-200 rounded-grc-sm px-8px py-4px text-[12px] font-medium` |
-| other | `bg-gray-100 text-gray-600 border border-gray-300 rounded-grc-sm px-8px py-4px text-[12px] font-medium` |
+| pecoga | `bg-purple-50 text-purple-700 border border-purple-200 rounded-grc-sm px-8px py-4px text-[14px]` |
+| ppdpa | `bg-blue-50 text-blue-700 border border-blue-200 rounded-grc-sm px-8px py-4px text-[14px]` |
+| nds2 | `bg-teal-50 text-teal-700 border border-teal-200 rounded-grc-sm px-8px py-4px text-[14px]` |
+| iso_37000 | `bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-grc-sm px-8px py-4px text-[14px]` |
+| king_iv | `bg-amber-50 text-amber-700 border border-amber-200 rounded-grc-sm px-8px py-4px text-[14px]` |
+| ipsas | `bg-cyan-50 text-cyan-700 border border-cyan-200 rounded-grc-sm px-8px py-4px text-[14px]` |
+| pfma | `bg-orange-50 text-orange-700 border border-orange-200 rounded-grc-sm px-8px py-4px text-[14px]` |
+| other | `bg-gray-100 text-gray-600 border border-gray-300 rounded-grc-sm px-8px py-4px text-[14px]` |
 
 **Evidence integrity status colors:**
 
@@ -185,12 +188,12 @@ Inherits all 28 components from Phases 1–3. Phase 4 adds and specifies the fol
 
 | Variant | Class |
 |---------|-------|
-| pending | `bg-paper text-navy-mid border border-paper-border rounded-grc-sm px-8px py-4px text-[13px]` |
-| compliant | `bg-ok/10 text-ok border border-ok/30 rounded-grc-sm px-8px py-4px text-[13px]` |
-| partially_compliant | `bg-warn/10 text-warn border border-warn/30 rounded-grc-sm px-8px py-4px text-[13px]` |
-| non_compliant | `bg-err/10 text-err border border-err/30 rounded-grc-sm px-8px py-4px text-[13px] font-semibold` |
-| overdue | `bg-err/30 text-err border border-err/50 rounded-grc-sm px-8px py-4px text-[13px] font-semibold` |
-| waived | `bg-gray-100 text-gray-500 border border-gray-200 rounded-grc-sm px-8px py-4px text-[13px]` |
+| pending | `bg-paper text-navy-mid border border-paper-border rounded-grc-sm px-8px py-4px text-[14px]` |
+| compliant | `bg-ok/10 text-ok border border-ok/30 rounded-grc-sm px-8px py-4px text-[14px]` |
+| partially_compliant | `bg-warn/10 text-warn border border-warn/30 rounded-grc-sm px-8px py-4px text-[14px]` |
+| non_compliant | `bg-err/10 text-err border border-err/30 rounded-grc-sm px-8px py-4px text-[14px] font-semibold` |
+| overdue | `bg-err/30 text-err border border-err/50 rounded-grc-sm px-8px py-4px text-[14px] font-semibold` |
+| waived | `bg-gray-100 text-gray-500 border border-gray-200 rounded-grc-sm px-8px py-4px text-[14px]` |
 
 Display label mapping (DB enum → display text):
 - `pending` → "Pending"
@@ -228,9 +231,9 @@ Layout spec:
 [STAT CARD — Card: white, border paper-border, rounded-grc-md, p-16px, shadow-card, min-w-160px]
   [ICON ROW — flex row, align-items center, gap-8px, mb-8px]
     [Icon: 18px lucide icon, color matched to semantic state]
-    [Label: DM Sans 13px/500 navy-mid uppercase letter-spacing 0.04em]
+    [Label: DM Sans 14px/400 navy-mid uppercase letter-spacing 0.04em]
   [STAT VALUE — DM Mono 28px/600, color matched to semantic state (ok/warn/err)]
-  [DESCRIPTION — DM Sans 13px/400 navy-mid, mt-4px]
+  [DESCRIPTION — DM Sans 14px/400 navy-mid, mt-4px]
 ```
 
 Three stat cards, side by side in a `grid grid-cols-3 gap-16px`:
@@ -266,19 +269,19 @@ Three stat cards, side by side in a `grid grid-cols-3 gap-16px`:
 
   [IDLE STATE]
     [Icon: Upload 32px paper-border]
-    [Heading: "Drop your evidence file here" — DM Sans 16px/500 navy-mid, mt-12px]
-    [Body: "or click to browse — PDF, DOCX, XLSX, JPG, PNG up to 25 MB" — DM Sans 13px/400 navy-mid, mt-4px]
+    [Heading: "Drop your evidence file here" — DM Sans 16px/400 navy-mid, mt-12px]
+    [Body: "or click to browse — PDF, DOCX, XLSX, JPG, PNG up to 25 MB" — DM Sans 14px/400 navy-mid, mt-4px]
 
   [DRAG-OVER STATE — border-gold bg-gold-pale/20]
     [Icon: Upload 32px gold]
-    [Heading: "Release to upload" — DM Sans 16px/500 navy-900, mt-12px]
+    [Heading: "Release to upload" — DM Sans 16px/400 navy-900, mt-12px]
 
   [FILE SELECTED STATE — border-ok/50 bg-ok/5]
     [Icon: FileCheck 32px ok]
-    [Filename: DM Sans 14px/500 navy-900, mt-12px — "[original_filename]"]
-    [Meta: DM Sans 13px/400 navy-mid, mt-4px — "[size] · [MIME type]"]
-    [SHA-256 progress: "Computing checksum..." — DM Sans 13px/400 navy-mid with spinner if in-progress]
-    [SHA-256 value (after compute): DM Mono 12px/400 navy-mid, mt-4px — full 64-char hex in code element]
+    [Filename: DM Sans 14px/400 navy-900, mt-12px — "[original_filename]"]
+    [Meta: DM Sans 14px/400 navy-mid, mt-4px — "[size] · [MIME type]"]
+    [SHA-256 progress: "Computing checksum..." — DM Sans 14px/400 navy-mid with spinner if in-progress]
+    [SHA-256 value (after compute): DM Mono 14px/400 navy-mid, mt-4px — full 64-char hex in code element]
     [Remove button: text link, "Remove file", small, err text color, mt-8px]
 
   [ERROR STATE — border-err bg-err/5]
@@ -307,14 +310,14 @@ SHA-256 computation: Web Crypto API (`crypto.subtle.digest('SHA-256', buffer)`).
     [MAIN CONTENT — flex-1, min-w-0]
       [ROW 1: flex row, justify-between, align-items start]
         [Left]
-          [Filename: DM Sans 14px/500 navy-900, truncate — original_filename]
-          [Meta: DM Sans 13px/400 navy-mid, mt-2px — "[size] · Uploaded [date] by [name]"]
+          [Filename: DM Sans 14px/400 navy-900, truncate — original_filename]
+          [Meta: DM Sans 14px/400 navy-mid, mt-2px — "[size] · Uploaded [date] by [name]"]
         [Right]
-          [Download button: outline variant, sm, "Download", Download icon 14px]
+          [Download button: outline variant, sm, "Download File", Download icon 14px]
 
       [SHA-256 ROW: mt-8px, flex row, align-items center, gap-8px]
         [Integrity icon + text — see Evidence integrity status colors above]
-        [Hash: DM Mono 12px/400 navy-mid — truncated to first 16 chars + "..." with Tooltip showing full hash]
+        [Hash: DM Mono 14px/400 navy-mid — truncated to first 16 chars + "..." with Tooltip showing full hash]
 
 [Hover state: bg-paper/70]
 [If integrity mismatch: left border 3px solid err, bg-err/5]
@@ -333,10 +336,10 @@ SHA-256 computation: Web Crypto API (`crypto.subtle.digest('SHA-256', buffer)`).
     [CONTENT — flex-1]
       [ROW 1: flex row, align-items center, gap-8px]
         [Attestation Status Badge (Component 29 variant — compliant/partially/non)]
-        [Attested by: DM Sans 13px/400 navy-mid — "by [Full Name]"]
-        [Timestamp: DM Mono 13px/400 navy-mid — "[date] at [time]"]
-      [NOTES: if notes present — DM Sans 13px/400 navy-900, mt-6px, italic]
-    [AUDIT BADGE: "Audit recorded" — DM Sans 11px/400 navy-mid, flex-shrink-0]
+        [Attested by: DM Sans 14px/400 navy-mid — "by [Full Name]"]
+        [Timestamp: DM Mono 14px/400 navy-mid — "[date] at [time]"]
+      [NOTES: if notes present — DM Sans 14px/400 navy-900, mt-6px, italic]
+    [AUDIT BADGE: "Audit recorded" — DM Sans 14px/400 navy-mid, flex-shrink-0]
       [Small badge: bg-paper text-navy-mid border-paper-border — conveys immutability]
 ```
 
@@ -352,7 +355,7 @@ Pattern mirrors Component 28 (Inline Treatment Status Select from Phase 3):
 
 ```tsx
 <Select value={obligation.status} onValueChange={(val) => handleStatusUpdate(obligation.id, val)}>
-  <SelectTrigger className="h-7 w-[160px] text-[13px] border-paper-border rounded-grc-sm">
+  <SelectTrigger className="h-7 w-[160px] text-[14px] border-paper-border rounded-grc-sm">
     <SelectValue />
   </SelectTrigger>
   <SelectContent>
@@ -399,6 +402,8 @@ Navigation: "Compliance" item added to sidebar with icon: `ClipboardList` (lucid
 **Route:** `/compliance` (Server Component)
 **Structure:** Authenticated. App shell present.
 
+**Primary focal point:** 3-stat row (compliance rate card); secondary focal point: "Add Obligation" gold CTA button.
+
 ```
 [APP SHELL]
 [CONTENT AREA — bg paper, px-32px, pt-32px]
@@ -417,7 +422,7 @@ Navigation: "Compliance" item added to sidebar with icon: `ClipboardList` (lucid
   [OBLIGATIONS PREVIEW — mt-24px, Card: white, p-24px, shadow-card, border paper-border]
     [Card header row: flex row, justify-between, align-items center]
       [Left: "Recent Obligations" — DM Sans 16px/600 navy-900]
-      [Right: "View all obligations →" — gold text link, 14px/500]
+      [Right: "View all obligations →" — gold text link, 14px/400]
     [Table: last 5 obligations — Title | Framework | Due Date | Status | Owner — no pagination]
     [No filter bar on dashboard — full filter on list page]
     [Empty state: see Copywriting Contract]
@@ -452,11 +457,15 @@ Navigation: "Compliance" item added to sidebar with icon: `ClipboardList` (lucid
       |--------|------|-------|---------|
       | Title | text, truncate | flex-1 | Yes |
       | Framework | FrameworkBadge (Component 30) | 120px | Yes |
-      | Due Date | DM Mono 13px — color err if overdue | 110px | Yes |
+      | Due Date | DM Mono 14px — color err if overdue | 110px | Yes |
       | Status | ObligationStatusBadge (Component 29) | 140px | Yes |
       | Owner | Avatar 24px + name | 140px | No |
       | Evidence | count chip "[N] files" | 80px | No |
       | Actions | icon buttons (View, Edit) | 80px | No |
+
+    Icon-only buttons in the Actions column:
+    - View button: `<Tooltip><TooltipTrigger><Button aria-label="View obligation: [obligation title]" ...><Eye /></Button></TooltipTrigger><TooltipContent>View obligation</TooltipContent></Tooltip>`
+    - Edit button: `<Tooltip><TooltipTrigger><Button aria-label="Edit obligation: [obligation title]" ...><Pencil /></Button></TooltipTrigger><TooltipContent>Edit obligation</TooltipContent></Tooltip>`
 
     [Overdue rows: left border 3px solid err — bg-err/5]
     [Expiring rows (due within 7 days, not compliant): left border 3px solid warn]
@@ -478,7 +487,7 @@ Navigation: "Compliance" item added to sidebar with icon: `ClipboardList` (lucid
 
 ```
 [CONTENT AREA — bg paper, px-32px, pt-32px, max-w-720px]
-  [BREADCRUMB — "Compliance / Add Obligation" — 13px/400 navy-mid]
+  [BREADCRUMB — "Compliance / Add Obligation" — 14px/400 navy-mid]
 
   [PAGE HEADER — mt-8px]
     [Title: "Add Obligation" — DM Sans 20px/600 navy-900]
@@ -510,7 +519,7 @@ Navigation: "Compliance" item added to sidebar with icon: `ClipboardList` (lucid
         [Helper: "The date by which this obligation must be fulfilled"]
 
     [FORM FOOTER — mt-32px, flex row, justify-end, gap-8px]
-      [Cancel button: outline variant, "Cancel" → /compliance/obligations]
+      [Cancel button: outline variant, "Back to Obligations" → /compliance/obligations]
       [Submit button: gold/primary, "Save Obligation", loading: spinner + "Saving..."]
 ```
 
@@ -533,16 +542,16 @@ Additions:
 
 ```
 [CONTENT AREA — bg paper, px-32px, pt-32px]
-  [BREADCRUMB — "Compliance / [Obligation Title]" — 13px/400 navy-mid]
+  [BREADCRUMB — "Compliance / [Obligation Title]" — 14px/400 navy-mid]
 
   [PAGE HEADER — mt-8px, flex row, justify-between, align-items start]
     [Left]
-      [Title: [Obligation title] — Playfair Display 28px/700 navy-900]
+      [Title: [Obligation title] — Playfair Display 28px/600 navy-900]
       [META ROW — mt-8px, flex row, align-items center, gap-8px, flex-wrap]
         [FrameworkBadge (Component 30)]
         [ObligationStatusBadge (Component 29) — static if user cannot attest, ObligationStatusSelect (Component 35) if can attest]
         ["Owned by [Name]" — 14px/400 navy-mid]
-        ["Due [date]" — DM Mono 13px navy-mid; color err if overdue, warn if within 7 days]
+        ["Due [date]" — DM Mono 14px navy-mid; color err if overdue, warn if within 7 days]
     [Right]
       [Button row: gap-8px]
         [Button: "Edit Obligation" — outline variant, Pencil icon, sm]
@@ -557,9 +566,9 @@ Additions:
       [DETAILS CARD — Card: white, p-24px, shadow-card]
         [Section: "Obligation Details"]
           [Description: body text 16px/400 navy-900 or "No description provided." — muted]
-          [Framework reference: DM Mono 13px/400 navy-mid if set, else "—"]
-          [Created: DM Mono 13px/400 — "Created [date] by [name]"]
-          [Last updated: DM Mono 13px/400]
+          [Framework reference: DM Mono 14px/400 navy-mid if set, else "—"]
+          [Created: DM Mono 14px/400 — "Created [date] by [name]"]
+          [Last updated: DM Mono 14px/400]
 
       [EVIDENCE CARD — mt-16px, Card: white, p-24px, shadow-card]
         [Card header: flex row, justify-between, align-items center]
@@ -572,7 +581,7 @@ Additions:
         [EMPTY STATE — if no evidence, py-24px text-center]
           [Icon: FileX 28px paper-border]
           [Text: "No evidence uploaded" — 14px/400 navy-mid]
-          [Link: "Upload evidence →" — gold text, 14px/500]
+          [Link: "Upload evidence →" — gold text, 14px/400]
 
     [RIGHT COLUMN]
       [ATTESTATION CARD — Card: white, p-24px, shadow-card]
@@ -586,7 +595,7 @@ Additions:
         [EMPTY STATE — if no attestations, py-24px text-center]
           [Icon: ShieldX 28px paper-border]
           [Text: "No attestations recorded" — 14px/400 navy-mid]
-          [Sub-text: "Submit an attestation to record compliance status." — 13px/400 navy-mid, mt-4px]
+          [Sub-text: "Submit an attestation to record compliance status." — 14px/400 navy-mid, mt-4px]
           [Button: "Attest Obligation" — outline variant, sm, mt-12px — admin/ceo/compliance_officer only]
 ```
 
@@ -597,13 +606,13 @@ Additions:
 
 ```
 [CONTENT AREA — bg paper, px-32px, pt-32px, max-w-560px]
-  [BREADCRUMB — "Compliance / [Obligation Title] / Attest" — 13px/400 navy-mid]
+  [BREADCRUMB — "Compliance / [Obligation Title] / Attest" — 14px/400 navy-mid]
 
   [PAGE HEADER]
     [Title: "Record Attestation" — DM Sans 20px/600 navy-900]
     [Context card: compact — bg gold-pale/30, border paper-border, rounded-grc-sm, p-12px, mt-8px]
-      [Icon + "Attesting:" DM Sans 13px/500 navy-mid] [Obligation title DM Sans 14px/600 navy-900]
-      [FrameworkBadge + DueDate DM Mono 13px/400 navy-mid, mt-4px]
+      [Icon + "Attesting:" DM Sans 14px/400 navy-mid] [Obligation title DM Sans 14px/600 navy-900]
+      [FrameworkBadge + DueDate DM Mono 14px/400 navy-mid, mt-4px]
 
   [FORM CARD — mt-24px, Card: white, p-32px, shadow-card]
     [FormField: Compliance Status — required]
@@ -612,9 +621,9 @@ Additions:
         [RADIO CARD — border border-paper-border rounded-grc-sm p-16px, flex row, align-items center, gap-12px, cursor-pointer]
           [Radio indicator (18px circle) — left]
           [Icon + Label + Description — right flex column]
-          [Option 1: CheckCircle2 ok-colored | "Compliant" 14px/600 navy-900 | "All requirements for this obligation have been fulfilled." 13px/400 navy-mid]
-          [Option 2: AlertCircle warn-colored | "Partially Compliant" 14px/600 navy-900 | "Some requirements met; corrective actions are in progress." 13px/400 navy-mid]
-          [Option 3: XCircle err-colored | "Non-Compliant" 14px/600 navy-900 | "Requirements have not been met. Corrective action required." 13px/400 navy-mid]
+          [Option 1: CheckCircle2 ok-colored | "Compliant" 14px/600 navy-900 | "All requirements for this obligation have been fulfilled." 14px/400 navy-mid]
+          [Option 2: AlertCircle warn-colored | "Partially Compliant" 14px/600 navy-900 | "Some requirements met; corrective actions are in progress." 14px/400 navy-mid]
+          [Option 3: XCircle err-colored | "Non-Compliant" 14px/600 navy-900 | "Requirements have not been met. Corrective action required." 14px/400 navy-mid]
         [Selected state: border-gold, bg-gold-pale/20, radio filled gold]
 
     [FormField: Notes — Textarea, optional, mt-16px]
@@ -627,7 +636,7 @@ Additions:
       [AlertDescription: "Your user identity, the current timestamp, and this status will be recorded in the immutable audit trail. This record cannot be modified after submission."]
 
     [FORM FOOTER — mt-32px, flex row, justify-end, gap-8px]
-      [Cancel: outline, "Cancel" → /compliance/obligations/[id]]
+      [Cancel: outline, "Back to Obligation" → /compliance/obligations/[id]]
       [Submit: gold/primary, "Submit Attestation", loading: spinner + "Submitting..."]
 ```
 
@@ -638,7 +647,7 @@ Additions:
 
 ```
 [CONTENT AREA — bg paper, px-32px, pt-32px, max-w-560px]
-  [BREADCRUMB — "Compliance / [Obligation Title] / Upload Evidence" — 13px/400 navy-mid]
+  [BREADCRUMB — "Compliance / [Obligation Title] / Upload Evidence" — 14px/400 navy-mid]
 
   [PAGE HEADER]
     [Title: "Upload Evidence" — DM Sans 20px/600 navy-900]
@@ -651,7 +660,7 @@ Additions:
       [AlertDescription: "Accepted: PDF, DOCX, XLSX, JPG, PNG — Maximum 25 MB per file"]
 
     [FORM FOOTER — mt-24px, flex row, justify-end, gap-8px]
-      [Cancel: outline, "Cancel" → /compliance/obligations/[id]]
+      [Cancel: outline, "Back to Obligation" → /compliance/obligations/[id]]
       [Submit: gold/primary, "Upload Evidence", disabled until file selected + SHA-256 computed]
       [Loading state: spinner + "Uploading..." — do not hide; large files take time]
 ```
@@ -689,8 +698,11 @@ Compliance language is regulatory in character — use precise terminology match
 | Submit attestation form | "Submit Attestation" |
 | Open evidence upload form | "Upload Evidence" |
 | Submit evidence upload | "Upload Evidence" |
-| Download evidence file | "Download" |
+| Download evidence file | "Download File" |
 | Navigate to obligation detail | "View" |
+| Cancel Create Obligation form | "Back to Obligations" |
+| Cancel Attestation form | "Back to Obligation" |
+| Cancel Evidence Upload form | "Back to Obligation" |
 
 ### Empty States
 
@@ -829,6 +841,8 @@ Inherits all Phase 1 and Phase 3 accessibility rules. Phase 4 additions:
 | Attestation history list | `aria-label="Attestation history, [N] records"`, `aria-live="polite"` (new attestations announced) |
 | SHA-256 hash display | `aria-label="SHA-256 checksum: [full hash value]"` — Tooltip provides full hash; truncated display is decorative |
 | Digital signature notice | `role="note"`, `aria-label="Attestation will be recorded in the immutable audit trail"` |
+| View obligation button (icon-only) | `aria-label="View obligation: [obligation title]"` + Tooltip: "View obligation" |
+| Edit obligation button (icon-only) | `aria-label="Edit obligation: [obligation title]"` + Tooltip: "Edit obligation" |
 
 ### Color Independence
 
