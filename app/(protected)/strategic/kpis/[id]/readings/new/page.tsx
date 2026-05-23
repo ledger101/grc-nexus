@@ -15,6 +15,15 @@ interface PageProps {
   params: { id: string }
 }
 
+type KpiReadingContext = {
+  id: string
+  title: string
+  reporting_frequency: KpiFrequency
+  unit_of_measure: string
+  owner_id: string | null
+  target_value: number
+}
+
 export default async function NewReadingPage({ params }: PageProps) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -28,16 +37,18 @@ export default async function NewReadingPage({ params }: PageProps) {
 
   if (!kpi) redirect('/strategic')
 
+  const kpiRow = kpi as unknown as KpiReadingContext
+
   const appMeta = user.app_metadata as Partial<AppMetadata>
   const activeRole = appMeta?.active_role
-  const canRecord = activeRole === 'admin' || kpi.owner_id === user.id
+  const canRecord = activeRole === 'admin' || kpiRow.owner_id === user.id
 
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
         <h1 className="text-[20px] font-semibold text-navy-900 font-body">Record Reading</h1>
         <p className="text-[14px] text-navy-mid mt-1">
-          KPI: <strong>{kpi.title}</strong> — Target: {kpi.target_value} {kpi.unit_of_measure}
+          KPI: <strong>{kpiRow.title}</strong> — Target: {kpiRow.target_value} {kpiRow.unit_of_measure}
         </p>
       </div>
       {!canRecord ? (
@@ -46,9 +57,9 @@ export default async function NewReadingPage({ params }: PageProps) {
         </div>
       ) : (
         <ReadingForm
-          kpiId={kpi.id}
-          frequency={kpi.reporting_frequency as KpiFrequency}
-          unit={kpi.unit_of_measure}
+          kpiId={kpiRow.id}
+          frequency={kpiRow.reporting_frequency}
+          unit={kpiRow.unit_of_measure}
         />
       )}
     </div>

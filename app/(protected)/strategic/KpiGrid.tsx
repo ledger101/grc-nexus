@@ -37,7 +37,7 @@ type KpiRow = {
   objective_id: string
   strategic_objectives: { id: string; title: string } | null
   kpi_readings: { actual_value: number; reporting_period: string; recorded_at: string }[]
-  user_profiles: { full_name: string } | null
+  user_profiles: { first_name: string | null; last_name: string | null } | null
 }
 
 interface KpiGridProps {
@@ -101,7 +101,7 @@ export function KpiGrid({ kpis, totalCount, page, pageSize, statusFilter }: KpiG
         header: 'Owner',
         cell: ({ row }) => (
           <span className="text-navy-mid text-[13px]">
-            {row.original.user_profiles?.full_name ?? '—'}
+            {[row.original.user_profiles?.first_name, row.original.user_profiles?.last_name].filter(Boolean).join(' ') || '—'}
           </span>
         ),
       },

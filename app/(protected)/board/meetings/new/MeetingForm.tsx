@@ -8,6 +8,7 @@ import { Loader2, Plus, Trash2 } from 'lucide-react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import { meetingSchema } from '@/lib/schemas/board'
 import { createMeeting, updateMeeting } from '@/lib/board/actions'
 
@@ -151,7 +152,7 @@ export function MeetingForm({
 
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <FormLabel>Agenda items</FormLabel>
+              <Label>Agenda items</Label>
               <Button type="button" variant="outline" size="sm" onClick={addAgendaItem}>
                 <Plus className="mr-1 h-3.5 w-3.5" /> Add
               </Button>
@@ -173,7 +174,7 @@ export function MeetingForm({
           </div>
 
           <div>
-            <FormLabel>Attendees</FormLabel>
+            <Label>Attendees</Label>
             <div className="mt-2 grid grid-cols-1 gap-2 rounded border border-paper-border p-3 sm:grid-cols-2">
               {members.map((member) => {
                 const checked = form.watch('attendee_ids').includes(member.id)

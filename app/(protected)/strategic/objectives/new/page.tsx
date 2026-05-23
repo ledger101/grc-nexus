@@ -28,8 +28,8 @@ export default async function NewObjectivePage() {
   // Fetch user profiles for owner selector — RLS scopes to institution_id (T-02-P04-04)
   const { data: profiles } = await supabase
     .from('user_profiles')
-    .select('id, full_name')
-    .order('full_name')
+    .select('id, first_name, last_name')
+    .order('last_name')
 
   return (
     <div className="max-w-2xl">

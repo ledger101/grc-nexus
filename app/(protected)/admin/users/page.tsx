@@ -21,10 +21,21 @@ export default async function UsersPage() {
       status,
       active_role,
       institution_id,
-      created_at,
-      user_roles (role_name)
+      created_at
     `)
     .order('created_at', { ascending: false })
+
+  const { data: userRoles } = await supabase
+    .from('user_roles')
+    .select('user_id, role_name')
+
+  const rolesByUserId: Record<string, { role_name: string }[]> = {}
+  for (const role of userRoles ?? []) {
+    if (!rolesByUserId[role.user_id]) {
+      rolesByUserId[role.user_id] = []
+    }
+    rolesByUserId[role.user_id].push({ role_name: role.role_name })
+  }
 
   // Fetch auth users for email addresses (not directly queryable via RLS)
   const { data: { users: authUsers } } = await admin.auth.admin.listUsers()
@@ -34,6 +45,7 @@ export default async function UsersPage() {
     const authUser = authUsers.find((u) => u.id === profile.id)
     return {
       ...profile,
+      user_roles: rolesByUserId[profile.id] ?? [],
       email: authUser?.email ?? '',
     }
   })

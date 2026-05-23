@@ -57,7 +57,7 @@ export function ReadingForm({ kpiId, frequency, unit }: ReadingFormProps) {
     setError(null)
     startTransition(async () => {
       const result = await recordKpiReading(kpiId, values)
-      if (result?.error) {
+      if ('error' in result) {
         setError(result.error)
       } else {
         router.push(`/strategic/kpis/${kpiId}`)

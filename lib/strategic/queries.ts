@@ -31,7 +31,7 @@ export async function getKpisWithReadings(
       objective_id,
       strategic_objectives ( id, title ),
       kpi_readings ( actual_value, reporting_period, recorded_at ),
-      user_profiles!owner_id ( full_name )
+      user_profiles!owner_id ( first_name, last_name )
       `,
       { count: 'exact' }
     )
@@ -66,7 +66,7 @@ export async function getObjectives(supabase: SupabaseClient) {
       start_date,
       target_date,
       created_at,
-      user_profiles!owner_id ( full_name )
+      user_profiles!owner_id ( first_name, last_name )
       `
     )
     .order('created_at', { ascending: false })

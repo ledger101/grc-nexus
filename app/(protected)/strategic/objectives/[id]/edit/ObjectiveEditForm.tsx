@@ -27,7 +27,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 interface ObjectiveEditFormProps {
   objective: StrategicObjective
-  owners: { id: string; full_name: string }[]
+  owners: { id: string; first_name: string | null; last_name: string | null }[]
 }
 
 const NDS2_PILLAR_OPTIONS = Object.entries(NDS2_PILLAR_LABELS) as [Nds2Pillar, string][]
@@ -57,7 +57,7 @@ export function ObjectiveEditForm({ objective, owners }: ObjectiveEditFormProps)
     setError(null)
     startTransition(async () => {
       const result = await updateObjective(objective.id, values)
-      if (result?.error) {
+      if ('error' in result) {
         setError(result.error)
       } else {
         router.push(`/strategic/objectives/${objective.id}`)
@@ -190,7 +190,7 @@ export function ObjectiveEditForm({ objective, owners }: ObjectiveEditFormProps)
                   </FormControl>
                   <SelectContent>
                     {owners.map((owner) => (
-                      <SelectItem key={owner.id} value={owner.id}>{owner.full_name}</SelectItem>
+                      <SelectItem key={owner.id} value={owner.id}>{[owner.first_name, owner.last_name].filter(Boolean).join(' ') || '—'}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

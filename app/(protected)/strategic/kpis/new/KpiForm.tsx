@@ -29,7 +29,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 interface KpiFormProps {
   objectives: { id: string; title: string }[]
-  owners: { id: string; full_name: string }[]
+  owners: { id: string; first_name: string | null; last_name: string | null }[]
 }
 
 const KPI_FREQUENCY_OPTIONS = Object.entries(KPI_FREQUENCY_LABELS) as [KpiFrequency, string][]
@@ -58,7 +58,7 @@ export function KpiForm({ objectives, owners }: KpiFormProps) {
     setError(null)
     startTransition(async () => {
       const result = await createKpi(values)
-      if (result?.error) {
+      if ('error' in result) {
         setError(result.error)
       } else {
         // Redirect to parent objective detail page (KPI is now linked there)
@@ -161,7 +161,7 @@ export function KpiForm({ objectives, owners }: KpiFormProps) {
                   </FormControl>
                   <SelectContent>
                     {owners.map((owner) => (
-                      <SelectItem key={owner.id} value={owner.id}>{owner.full_name}</SelectItem>
+                      <SelectItem key={owner.id} value={owner.id}>{[owner.first_name, owner.last_name].filter(Boolean).join(' ') || '—'}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

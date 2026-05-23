@@ -1,4 +1,4 @@
----
+﻿---
 phase: 3
 slug: enterprise-risk-management-risk-register-and-heatmap
 status: draft
@@ -583,7 +583,8 @@ Additions:
         [Treatment list — flex column, gap-8px, mt-16px]
           [For each treatment — Treatment Row]
             [TREATMENT ROW — white border paper-border rounded-grc-sm p-12px]
-              [Row 1: Treatment title — 14px/500 navy-900 + Treatment Status Badge right]
+              [Row 1: Treatment title — 14px/500 navy-900]
+                     [Right: Inline Treatment Status Select (Component 28) — replaces static badge]
               [Row 2: "Due [date]" DM Mono 13px — color err if overdue, else navy-mid]
                      [+ "Owned by [Name]" 13px/400 navy-mid]
               [Row 3 (if description): description text 13px/400 navy-mid, mt-4px, line-clamp-2]
@@ -811,6 +812,50 @@ Heatmap dots numbered sequentially — dot number provides color-independent ide
 - On treatment save (redirect + scroll): focus moves to treatments section heading
 - On dialog open (close risk / cancel treatment): focus trapped in dialog
 - On dialog cancel/confirm: focus returns to trigger element
+
+---
+
+### 28. Inline Treatment Status Select
+
+**shadcn primitive:** `Select`, `SelectTrigger`, `SelectContent`, `SelectItem` (already installed)
+**Used on:** Risk detail page (`/risk/[id]`) — each treatment row, right side of Row 1
+**File:** `components/risk/TreatmentStatusSelect.tsx`
+
+Pattern: Controlled `<Select>` rendered in place of the static Treatment Status Badge. On value change, calls a Server Action (`updateTreatmentStatus`) and fires a success toast. No page reload.
+
+```tsx
+<Select value={treatment.status} onValueChange={(val) => handleStatusUpdate(treatment.id, val)}>
+  <SelectTrigger className="h-7 w-[130px] text-[13px] border-paper-border rounded-grc-sm">
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="planned">Planned</SelectItem>
+    <SelectItem value="in_progress">In Progress</SelectItem>
+    <SelectItem value="completed">Completed</SelectItem>
+    <SelectItem value="cancelled">Cancelled</SelectItem>
+  </SelectContent>
+</Select>
+```
+
+Style notes:
+- Trigger height: `h-7` (28px) — compact, fits Row 1 without increasing row height
+- Trigger width: `w-[130px]` — matches approximate width of longest status label "In Progress"
+- Trigger border: `border-paper-border` — low-visual-weight; does not compete with the title
+- Font: `text-[13px]` (DM Sans via shadcn default) — matches Treatment Status Badge text size
+- On hover: `border-navy-mid/40` — subtle affordance that the element is interactive
+- "Overdue" is NOT an option in this select — it is set automatically by the system; if current status is `overdue`, the trigger displays a read-only Treatment Status Badge (Component 21) instead of an editable Select
+
+Overdue guard: if `treatment.status === 'overdue'`, render the static `TreatmentStatusBadge` (Component 21) instead of this component. The overdue state is system-set — users cannot manually select it.
+
+Interaction:
+- `onValueChange` fires immediately on selection (no confirm step for non-destructive status changes)
+- Changing to `cancelled` triggers the existing "Cancel treatment?" Dialog (Destructive Confirmation, inherited from Phase 1) before committing
+- Server Action: `updateTreatmentStatus(treatmentId: string, newStatus: TreatmentStatus)` — validates transition, records in audit log, checks overdue, sends Resend notification if overdue triggered
+- Success: toast "Treatment status updated." (4000ms success)
+- Failure: toast "Unable to save. Please try again." (persistent destructive)
+- Optimistic update: trigger shows new value immediately; reverts on server error
+
+ARIA: `<SelectTrigger aria-label="Update treatment status for [treatment title]">`
 
 ---
 

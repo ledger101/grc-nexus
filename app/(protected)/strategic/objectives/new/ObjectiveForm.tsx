@@ -26,7 +26,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea'
 
 interface ObjectiveFormProps {
-  owners: { id: string; full_name: string }[]
+  owners: { id: string; first_name: string | null; last_name: string | null }[]
 }
 
 const NDS2_PILLAR_OPTIONS = Object.entries(NDS2_PILLAR_LABELS) as [Nds2Pillar, string][]
@@ -56,7 +56,7 @@ export function ObjectiveForm({ owners }: ObjectiveFormProps) {
     setError(null)
     startTransition(async () => {
       const result = await createObjective(values)
-      if (result?.error) {
+      if ('error' in result) {
         setError(result.error)
       } else {
         router.push('/strategic/objectives')
@@ -191,7 +191,7 @@ export function ObjectiveForm({ owners }: ObjectiveFormProps) {
                   </FormControl>
                   <SelectContent>
                     {owners.map((owner) => (
-                      <SelectItem key={owner.id} value={owner.id}>{owner.full_name}</SelectItem>
+                      <SelectItem key={owner.id} value={owner.id}>{[owner.first_name, owner.last_name].filter(Boolean).join(' ') || '—'}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

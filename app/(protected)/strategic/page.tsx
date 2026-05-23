@@ -5,6 +5,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getKpisWithReadings, getObjectives, KPI_PAGE_SIZE } from '@/lib/strategic/queries'
+import { relationToObject } from '@/lib/supabase/relation-utils'
 import { KpiGrid } from './KpiGrid'
 import { KpiFilterBar } from './KpiFilterBar'
 import type { AppRole } from '@/types/auth'
@@ -21,6 +22,21 @@ const ALLOWED_ROLES: AppRole[] = [
   'board-member',
   'dept-head',
 ]
+
+type StrategicObjectiveOption = { id: string; title: string }
+
+type KpiGridRow = {
+  id: string
+  title: string
+  owner_id: string | null
+  target_value: number
+  unit_of_measure: string
+  reporting_frequency: string
+  objective_id: string
+  strategic_objectives: { id: string; title: string } | null
+  kpi_readings: { actual_value: number; reporting_period: string; recorded_at: string }[]
+  user_profiles: { first_name: string | null; last_name: string | null } | null
+}
 
 export default async function StrategicPage({
   searchParams,
@@ -51,7 +67,24 @@ export default async function StrategicPage({
   ])
 
   const { data: kpis, count } = kpisResult
-  const objectives = objectivesResult.data.map((o) => ({ id: o.id, title: o.title }))
+  const normalizedKpis: KpiGridRow[] = (kpis as Array<Record<string, unknown>>).map((row) => {
+    const objectiveRelation = row.strategic_objectives as { id: string; title: string } | Array<{ id: string; title: string }> | null | undefined
+    const objective = relationToObject(objectiveRelation)
+
+    const ownerRelation = row.user_profiles as { first_name: string | null; last_name: string | null } | Array<{ first_name: string | null; last_name: string | null }> | null | undefined
+    const owner = relationToObject(ownerRelation)
+
+    return {
+      ...(row as unknown as Omit<KpiGridRow, 'strategic_objectives' | 'user_profiles'>),
+      strategic_objectives: objective,
+      user_profiles: owner,
+    }
+  })
+
+  const objectives = (objectivesResult.data as Array<Record<string, unknown>>).map((o) => ({
+    id: o.id as string,
+    title: o.title as string,
+  })) as StrategicObjectiveOption[]
 
   return (
     <div>
@@ -65,7 +98,7 @@ export default async function StrategicPage({
       </div>
       <KpiFilterBar objectives={objectives} />
       <KpiGrid
-        kpis={kpis}
+        kpis={normalizedKpis}
         totalCount={count ?? 0}
         page={page}
         pageSize={KPI_PAGE_SIZE}

@@ -3,7 +3,7 @@
 // SERVER-SIDE ONLY — never import in client components.
 // Gracefully degrades when RESEND_API_KEY is not set (dev environment).
 import { Resend } from 'resend'
-import { renderAsync } from '@react-email/components'
+import { createElement } from 'react'
 import { RoleAssignmentEmail } from './templates/RoleAssignmentEmail'
 
 export async function sendRoleAssignmentEmail(params: {
@@ -20,19 +20,15 @@ export async function sendRoleAssignmentEmail(params: {
 
   const resend = new Resend(resendKey)
 
-  const html = await renderAsync(
-    RoleAssignmentEmail({
-      name: params.name,
-      role: params.role,
-      institutionName: params.institutionName,
-    })
-  )
-
   const { error } = await resend.emails.send({
     from: 'GRC-Nexus <noreply@grcnexus.gov.zw>',
     to: [params.to],
     subject: 'Your GRC-Nexus role has been updated',
-    html,
+    react: createElement(RoleAssignmentEmail, {
+      name: params.name,
+      role: params.role,
+      institutionName: params.institutionName,
+    }),
   })
 
   if (error) {

@@ -4,6 +4,7 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+import { relationToObject } from '@/lib/supabase/relation-utils'
 import { Badge } from '@/components/ui/badge'
 import { format } from 'date-fns'
 import type { AppRole } from '@/types/auth'
@@ -27,6 +28,30 @@ interface PageProps {
   params: { id: string }
 }
 
+type ObjectiveOwner = { first_name: string | null; last_name: string | null }
+
+type ObjectiveDetail = {
+  id: string
+  title: string
+  description: string | null
+  status: ObjectiveStatus
+  nds2_pillar: Nds2Pillar | null
+  institutional_goal: string | null
+  start_date: string | null
+  target_date: string | null
+  created_at: string
+  user_profiles: ObjectiveOwner | ObjectiveOwner[] | null
+}
+
+type ObjectiveKpiRow = {
+  id: string
+  title: string
+  unit_of_measure: string
+  target_value: number
+  reporting_frequency: keyof typeof KPI_FREQUENCY_LABELS
+  user_profiles: ObjectiveOwner | ObjectiveOwner[] | null
+}
+
 export default async function ObjectiveDetailPage({ params }: PageProps) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -38,7 +63,7 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
   // Fetch objective with owner profile — RLS enforces institution_id scoping (T-02-P04-02)
   const { data: objective } = await supabase
     .from('strategic_objectives')
-    .select('*, user_profiles!owner_id(full_name)')
+    .select('*, user_profiles!owner_id(first_name, last_name)')
     .eq('id', params.id)
     .single()
 
@@ -47,20 +72,25 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
     redirect('/strategic/objectives')
   }
 
+  const objectiveRow = objective as unknown as ObjectiveDetail
+
   // Fetch linked KPIs
   const { data: kpis } = await supabase
     .from('kpis')
-    .select('id, title, unit_of_measure, target_value, reporting_frequency, owner_id, user_profiles!owner_id(full_name)')
+    .select('id, title, unit_of_measure, target_value, reporting_frequency, owner_id, user_profiles!owner_id(first_name, last_name)')
     .eq('objective_id', params.id)
     .order('created_at', { ascending: false })
+
+  const kpiRows = (kpis ?? []) as unknown as ObjectiveKpiRow[]
 
   const canEdit = activeRole ? EDIT_ROLES.includes(activeRole) : false
   const canAddKpi = activeRole ? KPI_CREATE_ROLES.includes(activeRole) : false
 
-  const ownerName = (objective.user_profiles as { full_name: string } | null)?.full_name ?? '—'
-  const pillarDisplay = objective.nds2_pillar
-    ? NDS2_PILLAR_LABELS[objective.nds2_pillar as Nds2Pillar]
-    : objective.institutional_goal ?? '—'
+  const ownerProfile = relationToObject(objectiveRow.user_profiles)
+  const ownerName = [ownerProfile?.first_name, ownerProfile?.last_name].filter(Boolean).join(' ') || '—'
+  const pillarDisplay = objectiveRow.nds2_pillar
+    ? NDS2_PILLAR_LABELS[objectiveRow.nds2_pillar]
+    : objectiveRow.institutional_goal ?? '—'
 
   return (
     <div>
@@ -68,11 +98,11 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
       <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-[20px] font-semibold text-navy-900 font-body">{objective.title}</h1>
+            <h1 className="text-[20px] font-semibold text-navy-900 font-body">{objectiveRow.title}</h1>
             <Badge
-              className={`text-[12px] font-medium border ${OBJECTIVE_STATUS_BADGE[objective.status as ObjectiveStatus]}`}
+              className={`text-[12px] font-medium border ${OBJECTIVE_STATUS_BADGE[objectiveRow.status]}`}
             >
-              {OBJECTIVE_STATUS_LABELS[objective.status as ObjectiveStatus]}
+              {OBJECTIVE_STATUS_LABELS[objectiveRow.status]}
             </Badge>
           </div>
           <Link
@@ -95,10 +125,10 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
       {/* Detail card */}
       <div className="bg-white rounded-[10px] border border-paper-border shadow-card p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {objective.description && (
+          {objectiveRow.description && (
             <div className="md:col-span-2">
               <p className="text-[13px] font-semibold uppercase tracking-wider text-navy-mid mb-1">Description</p>
-              <p className="text-[14px] text-navy-900">{objective.description}</p>
+              <p className="text-[14px] text-navy-900">{objectiveRow.description}</p>
             </div>
           )}
           <div>
@@ -112,19 +142,19 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
           <div>
             <p className="text-[13px] font-semibold uppercase tracking-wider text-navy-mid mb-1">Start Date</p>
             <p className="text-[14px] text-navy-900 font-mono">
-              {objective.start_date ? format(new Date(objective.start_date), 'yyyy-MM-dd') : '—'}
+              {objectiveRow.start_date ? format(new Date(objectiveRow.start_date), 'yyyy-MM-dd') : '—'}
             </p>
           </div>
           <div>
             <p className="text-[13px] font-semibold uppercase tracking-wider text-navy-mid mb-1">Target Date</p>
             <p className="text-[14px] text-navy-900 font-mono">
-              {objective.target_date ? format(new Date(objective.target_date), 'yyyy-MM-dd') : '—'}
+              {objectiveRow.target_date ? format(new Date(objectiveRow.target_date), 'yyyy-MM-dd') : '—'}
             </p>
           </div>
           <div>
             <p className="text-[13px] font-semibold uppercase tracking-wider text-navy-mid mb-1">Created</p>
             <p className="text-[14px] text-navy-900 font-mono">
-              {format(new Date(objective.created_at), 'yyyy-MM-dd')}
+              {format(new Date(objectiveRow.created_at), 'yyyy-MM-dd')}
             </p>
           </div>
         </div>
@@ -144,7 +174,7 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
           )}
         </div>
 
-        {(!kpis || kpis.length === 0) ? (
+        {kpiRows.length === 0 ? (
           <div className="bg-white rounded-[10px] border border-paper-border shadow-card p-8 text-center">
             <p className="text-[14px] text-navy-mid">No KPIs linked to this objective yet.</p>
             {canAddKpi && (
@@ -168,8 +198,9 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
                 </tr>
               </thead>
               <tbody>
-                {kpis.map((kpi) => {
-                  const kpiOwner = (kpi.user_profiles as { full_name: string } | null)?.full_name ?? '—'
+                {kpiRows.map((kpi) => {
+                  const kpiProfile = relationToObject(kpi.user_profiles)
+                  const kpiOwner = [kpiProfile?.first_name, kpiProfile?.last_name].filter(Boolean).join(' ') || '—'
                   return (
                     <tr key={kpi.id} className="border-b border-paper-border last:border-0 hover:bg-gray-50">
                       <td className="text-[13px] text-navy-900 px-4 py-3">
@@ -184,7 +215,7 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
                         {kpi.target_value} {kpi.unit_of_measure}
                       </td>
                       <td className="text-[13px] text-navy-900 px-4 py-3">
-                        {KPI_FREQUENCY_LABELS[kpi.reporting_frequency as keyof typeof KPI_FREQUENCY_LABELS]}
+                        {KPI_FREQUENCY_LABELS[kpi.reporting_frequency]}
                       </td>
                       <td className="text-[13px] text-navy-900 px-4 py-3">{kpiOwner}</td>
                     </tr>

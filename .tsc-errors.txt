@@ -1,0 +1,50 @@
+﻿app/(protected)/strategic/kpis/[id]/page.tsx(115,64): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(125,64): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(125,85): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(129,64): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(129,83): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(163,23): error TS2322: Type 'unknown' is not assignable to type 'Key | null | undefined'.
+app/(protected)/strategic/kpis/[id]/page.tsx(164,83): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(166,23): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(166,40): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(168,73): error TS2322: Type '{}' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(170,40): error TS2769: No overload matches this call.
+app/(protected)/strategic/kpis/[id]/page.tsx(47,35): error TS2345: Argument of type '{ [x: string]: unknown; }[]' is not assignable to parameter of type '{ actual_value: number; reporting_period: string; recorded_at: string; }[]'.
+app/(protected)/strategic/kpis/[id]/page.tsx(48,67): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'number'.
+app/(protected)/strategic/kpis/[id]/page.tsx(54,27): error TS2352: Conversion of type 'SelectQueryError<"could not find the relation between kpis and user_profiles">' to type '{ first_name: string | null; last_name: string | null; } | null' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+app/(protected)/strategic/kpis/[id]/page.tsx(56,27): error TS2352: Conversion of type 'SelectQueryError<"could not find the relation between kpis and strategic_objectives">' to type '{ id: string; title: string; } | null' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+app/(protected)/strategic/kpis/[id]/page.tsx(57,24): error TS2352: Conversion of type 'SelectQueryError<"could not find the relation between kpis and strategic_objectives">' to type '{ id: string; title: string; } | null' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+app/(protected)/strategic/kpis/[id]/page.tsx(65,79): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(90,11): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/page.tsx(93,56): error TS2322: Type '{}' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/readings/new/page.tsx(40,24): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/readings/new/page.tsx(40,55): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/readings/new/page.tsx(40,74): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/kpis/[id]/readings/new/page.tsx(49,11): error TS2322: Type 'unknown' is not assignable to type 'string'.
+app/(protected)/strategic/kpis/[id]/readings/new/page.tsx(51,11): error TS2322: Type 'unknown' is not assignable to type 'string | undefined'.
+app/(protected)/strategic/kpis/[id]/readings/new/ReadingForm.tsx(60,19): error TS2339: Property 'error' does not exist on type '{ error: string; } | { data: { id: string; }; }'.
+app/(protected)/strategic/kpis/[id]/readings/new/ReadingForm.tsx(61,25): error TS2339: Property 'error' does not exist on type '{ error: string; } | { data: { id: string; }; }'.
+app/(protected)/strategic/kpis/new/KpiForm.tsx(61,19): error TS2339: Property 'error' does not exist on type '{ error: string; } | { data: { id: string; }; }'.
+app/(protected)/strategic/kpis/new/KpiForm.tsx(62,25): error TS2339: Property 'error' does not exist on type '{ error: string; } | { data: { id: string; }; }'.
+app/(protected)/strategic/kpis/new/page.tsx(37,16): error TS2322: Type '{ id: unknown; title: unknown; }[]' is not assignable to type '{ id: string; title: string; }[]'.
+app/(protected)/strategic/objectives/[id]/edit/ObjectiveEditForm.tsx(60,19): error TS2339: Property 'error' does not exist on type '{ error: string; } | { data: { id: string; }; }'.
+app/(protected)/strategic/objectives/[id]/edit/ObjectiveEditForm.tsx(61,25): error TS2339: Property 'error' does not exist on type '{ error: string; } | { data: { id: string; }; }'.
+app/(protected)/strategic/objectives/[id]/edit/page.tsx(54,55): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/objectives/[id]/edit/page.tsx(57,20): error TS2352: Conversion of type '{ [x: string]: unknown; }' to type 'StrategicObjective' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+app/(protected)/strategic/objectives/[id]/page.tsx(102,56): error TS2322: Type '{}' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/objectives/[id]/page.tsx(107,54): error TS2322: Type '{}' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/objectives/[id]/page.tsx(116,55): error TS2769: No overload matches this call.
+app/(protected)/strategic/objectives/[id]/page.tsx(122,56): error TS2769: No overload matches this call.
+app/(protected)/strategic/objectives/[id]/page.tsx(128,32): error TS2769: No overload matches this call.
+app/(protected)/strategic/objectives/[id]/page.tsx(173,38): error TS2352: Conversion of type 'SelectQueryError<"could not find the relation between kpis and user_profiles">' to type '{ first_name: string | null; last_name: string | null; } | null' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+app/(protected)/strategic/objectives/[id]/page.tsx(176,25): error TS2322: Type 'unknown' is not assignable to type 'Key | null | undefined'.
+app/(protected)/strategic/objectives/[id]/page.tsx(182,27): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/objectives/[id]/page.tsx(186,25): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/objectives/[id]/page.tsx(186,44): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/objectives/[id]/page.tsx(60,24): error TS2352: Conversion of type 'SelectQueryError<"could not find the relation between strategic_objectives and user_profiles">' to type '{ first_name: string | null; last_name: string | null; } | null' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+app/(protected)/strategic/objectives/[id]/page.tsx(72,79): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/objectives/[id]/page.tsx(99,11): error TS2322: Type 'unknown' is not assignable to type 'ReactNode'.
+app/(protected)/strategic/objectives/ObjectivesTable.tsx(72,19): error TS2339: Property 'error' does not exist on type '{ error: string; } | { data: { id: string; }; }'.
+app/(protected)/strategic/objectives/ObjectivesTable.tsx(73,28): error TS2339: Property 'error' does not exist on type '{ error: string; } | { data: { id: string; }; }'.
+app/(protected)/strategic/objectives/page.tsx(43,24): error TS2322: Type '{ id: any; title: any; description: any; status: any; nds2_pillar: any; institutional_goal: any; owner_id: any; start_date: any; target_date: any; created_at: any; user_profiles: { first_name: any; last_name: any; }[]; }[]' is not assignable to type 'ObjectiveRow[]'.
+app/(protected)/strategic/page.tsx(68,9): error TS2322: Type '{ id: any; title: any; description: any; owner_id: any; baseline_value: any; target_value: any; unit_of_measure: any; reporting_frequency: any; objective_id: any; strategic_objectives: { id: any; title: any; }[]; kpi_readings: { ...; }[]; user_profiles: { ...; }[]; }[]' is not assignable to type 'KpiRow[]'.

@@ -5,13 +5,18 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { getObjectives } from '@/lib/strategic/queries'
+import { relationToObject } from '@/lib/supabase/relation-utils'
 import { ObjectivesTable } from './ObjectivesTable'
 import type { AppRole } from '@/types/auth'
+import type { StrategicObjective } from '@/types/strategic'
 
 export const dynamic = 'force-dynamic'
 export const metadata = { title: 'Strategic Objectives — GRC-Nexus' }
 
 const CREATE_ROLES: AppRole[] = ['admin', 'ceo']
+
+type ObjectiveOwner = { first_name: string | null; last_name: string | null }
+type ObjectiveTableRow = StrategicObjective & { user_profiles: ObjectiveOwner | null }
 
 export default async function ObjectivesPage() {
   const supabase = await createClient()
@@ -22,6 +27,15 @@ export default async function ObjectivesPage() {
   const activeRole = appMeta?.active_role as AppRole | undefined
 
   const { data: objectives } = await getObjectives(supabase)
+  const normalizedObjectives: ObjectiveTableRow[] = (objectives as Array<Record<string, unknown>>).map((row) => {
+    const ownerRelation = row.user_profiles as ObjectiveOwner | ObjectiveOwner[] | null | undefined
+    const owner = relationToObject(ownerRelation)
+
+    return {
+      ...(row as unknown as StrategicObjective),
+      user_profiles: owner,
+    }
+  })
   const canCreate = activeRole ? CREATE_ROLES.includes(activeRole) : false
 
   return (
@@ -40,7 +54,7 @@ export default async function ObjectivesPage() {
           </Link>
         )}
       </div>
-      <ObjectivesTable objectives={objectives} activeRole={activeRole} />
+      <ObjectivesTable objectives={normalizedObjectives} activeRole={activeRole} />
     </div>
   )
 }

@@ -19,6 +19,27 @@ interface PageProps {
   params: { id: string }
 }
 
+type KpiReadingRow = {
+  id: string
+  reporting_period: string
+  actual_value: number
+  notes: string | null
+  recorded_at: string
+}
+
+type KpiDetailRow = {
+  id: string
+  title: string
+  description: string | null
+  owner_id: string | null
+  target_value: number
+  baseline_value: number
+  unit_of_measure: string
+  reporting_frequency: KpiFrequency
+  strategic_objectives: { id: string; title: string } | null
+  user_profiles: { first_name: string | null; last_name: string | null } | null
+}
+
 export default async function KpiDetailPage({ params }: PageProps) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -30,11 +51,13 @@ export default async function KpiDetailPage({ params }: PageProps) {
   // Fetch KPI with linked objective title and owner name (RLS enforces institution_id scoping)
   const { data: kpi } = await supabase
     .from('kpis')
-    .select('*, strategic_objectives(id, title), user_profiles!owner_id(full_name)')
+    .select('*, strategic_objectives(id, title), user_profiles!owner_id(first_name, last_name)')
     .eq('id', params.id)
     .single()
 
   if (!kpi) redirect('/strategic')
+
+  const kpiRow = kpi as unknown as KpiDetailRow
 
   // Fetch all readings for this KPI for history list — ordered most recent first
   const { data: readings } = await supabase
@@ -44,16 +67,18 @@ export default async function KpiDetailPage({ params }: PageProps) {
     .order('recorded_at', { ascending: false })
 
   // Compute status from latest reading (D-14, D-15, D-16)
-  const latest = getLatestReading(readings ?? [])
-  const status = calculateKpiStatus(latest?.actual_value ?? null, kpi.target_value)
+  const kpiReadings = (readings ?? []) as unknown as KpiReadingRow[]
+  const latest = getLatestReading(kpiReadings)
+  const status = calculateKpiStatus(latest?.actual_value ?? null, kpiRow.target_value)
   const badge = KPI_STATUS_BADGE[status]
 
   // Role gate for Record Reading link (D-13)
-  const canRecord = activeRole === 'admin' || user.id === kpi.owner_id
+  const canRecord = activeRole === 'admin' || user.id === kpiRow.owner_id
 
-  const ownerName = (kpi.user_profiles as { full_name: string } | null)?.full_name ?? '—'
-  const objectiveTitle = (kpi.strategic_objectives as { id: string; title: string } | null)?.title ?? '—'
-  const objectiveId = (kpi.strategic_objectives as { id: string; title: string } | null)?.id
+  const kpiOwnerProfile = kpiRow.user_profiles
+  const ownerName = [kpiOwnerProfile?.first_name, kpiOwnerProfile?.last_name].filter(Boolean).join(' ') || '—'
+  const objectiveTitle = kpiRow.strategic_objectives?.title ?? '—'
+  const objectiveId = kpiRow.strategic_objectives?.id
 
   return (
     <div>
@@ -61,7 +86,7 @@ export default async function KpiDetailPage({ params }: PageProps) {
       <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-[20px] font-semibold text-navy-900 font-body">{kpi.title}</h1>
+            <h1 className="text-[20px] font-semibold text-navy-900 font-body">{kpiRow.title}</h1>
             <Badge className={`text-[12px] font-medium border ${badge.className}`}>
               {badge.label}
             </Badge>
@@ -86,10 +111,10 @@ export default async function KpiDetailPage({ params }: PageProps) {
       {/* Detail card */}
       <div className="bg-white rounded-[10px] border border-paper-border shadow-card p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {kpi.description && (
+          {kpiRow.description && (
             <div className="md:col-span-2">
               <p className="text-[13px] font-semibold uppercase tracking-wider text-navy-mid mb-1">Description</p>
-              <p className="text-[14px] text-navy-900">{kpi.description}</p>
+              <p className="text-[14px] text-navy-900">{kpiRow.description}</p>
             </div>
           )}
           <div>
@@ -111,21 +136,21 @@ export default async function KpiDetailPage({ params }: PageProps) {
           </div>
           <div>
             <p className="text-[13px] font-semibold uppercase tracking-wider text-navy-mid mb-1">Unit of Measure</p>
-            <p className="text-[14px] text-navy-900 font-mono">{kpi.unit_of_measure}</p>
+            <p className="text-[14px] text-navy-900 font-mono">{kpiRow.unit_of_measure}</p>
           </div>
           <div>
             <p className="text-[13px] font-semibold uppercase tracking-wider text-navy-mid mb-1">Reporting Frequency</p>
             <p className="text-[14px] text-navy-900">
-              {KPI_FREQUENCY_LABELS[kpi.reporting_frequency as KpiFrequency]}
+              {KPI_FREQUENCY_LABELS[kpiRow.reporting_frequency]}
             </p>
           </div>
           <div>
             <p className="text-[13px] font-semibold uppercase tracking-wider text-navy-mid mb-1">Baseline</p>
-            <p className="text-[14px] text-navy-900 font-mono">{kpi.baseline_value} {kpi.unit_of_measure}</p>
+            <p className="text-[14px] text-navy-900 font-mono">{kpiRow.baseline_value} {kpiRow.unit_of_measure}</p>
           </div>
           <div>
             <p className="text-[13px] font-semibold uppercase tracking-wider text-navy-mid mb-1">Target</p>
-            <p className="text-[14px] text-navy-900 font-mono">{kpi.target_value} {kpi.unit_of_measure}</p>
+            <p className="text-[14px] text-navy-900 font-mono">{kpiRow.target_value} {kpiRow.unit_of_measure}</p>
           </div>
         </div>
       </div>
@@ -134,7 +159,7 @@ export default async function KpiDetailPage({ params }: PageProps) {
       <div>
         <h2 className="text-[16px] font-semibold text-navy-900 mb-4">Reading History</h2>
 
-        {(!readings || readings.length === 0) ? (
+        {kpiReadings.length === 0 ? (
           <div className="bg-white rounded-[10px] border border-paper-border shadow-card p-8 text-center">
             <p className="text-[14px] text-navy-mid">No readings recorded yet.</p>
             {canRecord && (
@@ -158,11 +183,11 @@ export default async function KpiDetailPage({ params }: PageProps) {
                 </tr>
               </thead>
               <tbody>
-                {readings.map((r) => (
+                {kpiReadings.map((r) => (
                   <tr key={r.id} className="border-b border-paper-border last:border-0">
                     <td className="text-[13px] text-navy-900 px-4 py-3 font-mono">{r.reporting_period}</td>
                     <td className="text-[13px] text-navy-900 px-4 py-3 font-mono">
-                      {r.actual_value} {kpi.unit_of_measure}
+                      {r.actual_value} {kpiRow.unit_of_measure}
                     </td>
                     <td className="text-[13px] text-navy-mid px-4 py-3">{r.notes ?? '—'}</td>
                     <td className="text-[13px] text-navy-900 px-4 py-3 font-mono">

@@ -17,6 +17,8 @@ interface PageProps {
   params: { id: string }
 }
 
+type ObjectiveOwnerOption = { id: string; first_name: string | null; last_name: string | null }
+
 export default async function EditObjectivePage({ params }: PageProps) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -41,21 +43,25 @@ export default async function EditObjectivePage({ params }: PageProps) {
     redirect('/strategic/objectives')
   }
 
+  const objectiveRow = objective as unknown as StrategicObjective
+
   // Fetch user profiles for owner selector — RLS scopes to institution_id
   const { data: profiles } = await supabase
     .from('user_profiles')
-    .select('id, full_name')
-    .order('full_name')
+    .select('id, first_name, last_name')
+    .order('last_name')
+
+  const ownerOptions = (profiles ?? []) as unknown as ObjectiveOwnerOption[]
 
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
         <h1 className="text-[20px] font-semibold text-navy-900 font-body">Edit Objective</h1>
-        <p className="text-[14px] text-navy-mid mt-1">{objective.title}</p>
+        <p className="text-[14px] text-navy-mid mt-1">{objectiveRow.title}</p>
       </div>
       <ObjectiveEditForm
-        objective={objective as StrategicObjective}
-        owners={profiles ?? []}
+        objective={objectiveRow}
+        owners={ownerOptions}
       />
     </div>
   )

@@ -10,6 +10,12 @@ import type {
 
 type DbClient = SupabaseClient<Database>
 
+function isMissingTableError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false
+  const maybeCode = (error as { code?: unknown }).code
+  return maybeCode === 'PGRST205'
+}
+
 export interface ActionItemEscalationTarget {
   id: string
   title: string
@@ -42,7 +48,10 @@ export async function listMeetings(
   }
 
   const { data, error } = await query
-  if (error) throw error
+  if (error) {
+    if (isMissingTableError(error)) return []
+    throw error
+  }
   return (data ?? []) as BoardMeetingRow[]
 }
 
@@ -97,7 +106,10 @@ export async function listActionItems(
   }
 
   const { data, error } = await query
-  if (error) throw error
+  if (error) {
+    if (isMissingTableError(error)) return []
+    throw error
+  }
 
   return (data ?? []).map((row) => {
     const typed = row as Record<string, unknown>
@@ -135,6 +147,22 @@ export async function getBoardStats(supabase: DbClient): Promise<{
       .lt('due_date', today)
       .not('status', 'in', '("completed","cancelled")'),
   ])
+
+  if (
+    isMissingTableError(upcomingMeetingsResult.error) ||
+    isMissingTableError(openItemsResult.error) ||
+    isMissingTableError(overdueItemsResult.error)
+  ) {
+    return {
+      upcomingMeetings: 0,
+      openActionItems: 0,
+      overdueActions: 0,
+    }
+  }
+
+  if (upcomingMeetingsResult.error) throw upcomingMeetingsResult.error
+  if (openItemsResult.error) throw openItemsResult.error
+  if (overdueItemsResult.error) throw overdueItemsResult.error
 
   return {
     upcomingMeetings: upcomingMeetingsResult.count ?? 0,

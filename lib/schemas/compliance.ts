@@ -33,17 +33,9 @@ export const attestationSchema = z.object({
 export const evidenceUploadSchema = z.object({
   obligation_id: z.string().uuid(),
   sha256_hash: z.string().length(64, 'SHA-256 hash must be 64 characters.').regex(/^[a-f0-9]+$/, 'Invalid checksum.'),
-  mime_type: z.enum(
-    [
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/msword',
-      'image/jpeg',
-      'image/png',
-    ],
-    { errorMap: () => ({ message: 'File type not accepted. Accepted types: PDF, DOCX, XLSX, JPG, PNG.' }) }
-  ),
+  mime_type: z.enum(ALLOWED_MIME_TYPES, {
+    errorMap: () => ({ message: 'File type not accepted. Accepted types: PDF, DOCX, XLSX, JPG, PNG.' }),
+  }),
   file_size_bytes: z.number().max(25 * 1024 * 1024, 'File size exceeds the 25 MB limit.'),
 })
 

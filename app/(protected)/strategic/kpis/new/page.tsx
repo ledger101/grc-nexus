@@ -12,6 +12,9 @@ export const metadata = { title: 'Create KPI — GRC-Nexus' }
 
 const CREATE_KPI_ROLES: AppRole[] = ['admin', 'ceo', 'risk-officer']
 
+type ObjectiveOption = { id: string; title: string }
+type OwnerOption = { id: string; first_name: string | null; last_name: string | null }
+
 export default async function NewKpiPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -25,8 +28,11 @@ export default async function NewKpiPage() {
 
   const [{ data: objectives }, { data: owners }] = await Promise.all([
     supabase.from('strategic_objectives').select('id, title').eq('status', 'active').order('title'),
-    supabase.from('user_profiles').select('id, full_name').order('full_name'),
+    supabase.from('user_profiles').select('id, first_name, last_name').order('last_name'),
   ])
+
+  const objectiveOptions = (objectives ?? []) as unknown as ObjectiveOption[]
+  const ownerOptions = (owners ?? []) as unknown as OwnerOption[]
 
   return (
     <div className="max-w-2xl">
@@ -34,7 +40,7 @@ export default async function NewKpiPage() {
         <h1 className="text-[20px] font-semibold text-navy-900 font-body">Create KPI</h1>
         <p className="text-[14px] text-navy-mid mt-1">Define a KPI linked to a strategic objective</p>
       </div>
-      <KpiForm objectives={objectives ?? []} owners={owners ?? []} />
+      <KpiForm objectives={objectiveOptions} owners={ownerOptions} />
     </div>
   )
 }

@@ -44,7 +44,7 @@ const OBJECTIVE_STATUS_BADGE: Record<ObjectiveStatus, string> = {
 const EDIT_ROLES: AppRole[] = ['admin', 'ceo']
 
 type ObjectiveRow = StrategicObjective & {
-  user_profiles?: { full_name: string } | null
+  user_profiles?: { first_name: string | null; last_name: string | null } | null
 }
 
 interface ObjectivesTableProps {
@@ -69,7 +69,7 @@ export function ObjectivesTable({ objectives, activeRole }: ObjectivesTableProps
   function handleCancel(objective: ObjectiveRow) {
     startTransition(async () => {
       const result = await updateObjectiveStatus(objective.id, 'cancelled')
-      if (result?.error) {
+      if ('error' in result) {
         toast.error(result.error)
       } else {
         toast.success(`"${objective.title}" has been cancelled.`)
@@ -149,8 +149,8 @@ export function ObjectivesTable({ objectives, activeRole }: ObjectivesTableProps
                   >
                     {obj.title}
                   </Link>
-                  {obj.user_profiles?.full_name && (
-                    <p className="text-[12px] text-navy-mid mt-0.5">{obj.user_profiles.full_name}</p>
+                  {(obj.user_profiles?.first_name || obj.user_profiles?.last_name) && (
+                    <p className="text-[12px] text-navy-mid mt-0.5">{[obj.user_profiles.first_name, obj.user_profiles.last_name].filter(Boolean).join(' ')}</p>
                   )}
                 </TableCell>
                 <TableCell className="text-[13px] text-navy-900 px-4 py-3 max-w-[200px]">

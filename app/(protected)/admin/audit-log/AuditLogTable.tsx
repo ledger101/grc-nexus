@@ -8,6 +8,7 @@ import { ChevronDown, ChevronRight } from 'lucide-react'
 import { format } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import type { Json } from '@/types/supabase'
 import { DiffViewer } from './DiffViewer'
 
 type AuditEvent = {
@@ -16,11 +17,11 @@ type AuditEvent = {
   action: string
   table_name: string
   record_id: string | null
-  before_state: Record<string, unknown> | null
-  after_state: Record<string, unknown> | null
+  before_state: Json | null
+  after_state: Json | null
   occurred_at: string
   event_type: string | null
-  metadata: Record<string, unknown> | null
+  metadata: Json | null
   actor_name?: string | null
   actor_role?: string | null
 }

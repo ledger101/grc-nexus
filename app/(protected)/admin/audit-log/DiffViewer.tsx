@@ -3,10 +3,18 @@
 // JSONB diff viewer for audit log inline expansion.
 // Highlights changed fields: deleted (red in before), added/changed (green in after).
 // Per UI-SPEC Screen 8 — DM Mono 13px, #F3F7FD background, max-height 200px scroll.
+import type { Json } from '@/types/supabase'
 
 interface DiffViewerProps {
-  before: Record<string, unknown> | null
-  after: Record<string, unknown> | null
+  before: Json | null
+  after: Json | null
+}
+
+function asObject(json: Json | null): Record<string, unknown> | null {
+  if (json && typeof json === 'object' && !Array.isArray(json)) {
+    return json as Record<string, unknown>
+  }
+  return null
 }
 
 function getChangedKeys(
@@ -40,9 +48,11 @@ function JsonValue({ value }: { value: unknown }) {
 }
 
 export function DiffViewer({ before, after }: DiffViewerProps) {
-  const changedKeys = getChangedKeys(before, after)
-  const allBeforeKeys = Object.keys(before ?? {})
-  const allAfterKeys = Object.keys(after ?? {})
+  const beforeObject = asObject(before)
+  const afterObject = asObject(after)
+  const changedKeys = getChangedKeys(beforeObject, afterObject)
+  const allBeforeKeys = Object.keys(beforeObject ?? {})
+  const allAfterKeys = Object.keys(afterObject ?? {})
 
   return (
     <div className="grid grid-cols-2 gap-3">
@@ -55,7 +65,7 @@ export function DiffViewer({ before, after }: DiffViewerProps) {
           className="bg-paper border border-paper-border rounded-[6px] p-3 overflow-auto"
           style={{ maxHeight: 200, fontFamily: 'var(--font-dm-mono), monospace', fontSize: 13 }}
         >
-          {before === null ? (
+          {beforeObject === null ? (
             <span className="text-gray-400 italic text-[12px]">—</span>
           ) : allBeforeKeys.length === 0 ? (
             <span className="text-gray-400 italic text-[12px]">empty</span>
@@ -64,7 +74,7 @@ export function DiffViewer({ before, after }: DiffViewerProps) {
               <tbody>
                 {allBeforeKeys.map((key) => {
                   const isChanged = changedKeys.has(key)
-                  const isDeleted = !(after ?? {}).hasOwnProperty(key)
+                  const isDeleted = !(afterObject ?? {}).hasOwnProperty(key)
                   return (
                     <tr
                       key={key}
@@ -83,7 +93,7 @@ export function DiffViewer({ before, after }: DiffViewerProps) {
                       </td>
                       <td className="py-0.5 align-top break-all">
                         <span className={isChanged || isDeleted ? 'text-red-800' : 'text-navy-900'}>
-                          <JsonValue value={(before ?? {})[key]} />
+                          <JsonValue value={(beforeObject ?? {})[key]} />
                         </span>
                       </td>
                     </tr>
@@ -104,7 +114,7 @@ export function DiffViewer({ before, after }: DiffViewerProps) {
           className="bg-paper border border-paper-border rounded-[6px] p-3 overflow-auto"
           style={{ maxHeight: 200, fontFamily: 'var(--font-dm-mono), monospace', fontSize: 13 }}
         >
-          {after === null ? (
+          {afterObject === null ? (
             <span className="text-gray-400 italic text-[12px]">—</span>
           ) : allAfterKeys.length === 0 ? (
             <span className="text-gray-400 italic text-[12px]">empty</span>
@@ -113,7 +123,7 @@ export function DiffViewer({ before, after }: DiffViewerProps) {
               <tbody>
                 {allAfterKeys.map((key) => {
                   const isChanged = changedKeys.has(key)
-                  const isAdded = !(before ?? {}).hasOwnProperty(key)
+                  const isAdded = !(beforeObject ?? {}).hasOwnProperty(key)
                   return (
                     <tr
                       key={key}
@@ -126,7 +136,7 @@ export function DiffViewer({ before, after }: DiffViewerProps) {
                       </td>
                       <td className="py-0.5 align-top break-all">
                         <span className={isChanged || isAdded ? 'text-green-800' : 'text-navy-900'}>
-                          <JsonValue value={(after ?? {})[key]} />
+                          <JsonValue value={(afterObject ?? {})[key]} />
                         </span>
                       </td>
                     </tr>
