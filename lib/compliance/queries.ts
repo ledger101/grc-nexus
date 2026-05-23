@@ -132,8 +132,15 @@ export async function getComplianceStats(supabase: DbClient) {
 export async function getObligationsForEscalation(supabase: DbClient) {
   const threeDaysOut = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
 
-  // Fetch all obligations due within 3 days (including those already past due)
-  // and not in a terminal state — escalation.ts filters by threshold buckets
+  // Fetch obligations due within 3 days AND all past-due obligations (no lower bound on due_date).
+  // escalation.ts calls getEscalationThreshold() per row and skips those returning null.
+  //
+  // INTENTIONAL GAP (ME-02, D-26): obligations that are 1–6 days past due fall outside all
+  // three threshold buckets (early_warning covers pre-due, due_today covers day-of,
+  // critical_overdue covers 7+ days past). These rows are fetched here but skipped by
+  // escalation.ts. This matches the three-bucket design in D-26.
+  // To add day-by-day overdue alerts, update getEscalationThreshold() in compliance-utils.ts
+  // to return an 'overdue' bucket for diff values in the range [-6, -1].
   const { data, error } = await supabase
     .from('compliance_obligations')
     .select('id, title, due_date, owner_id, institution_id, framework')
