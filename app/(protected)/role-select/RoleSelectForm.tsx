@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 const ROLE_BADGE_COLORS: Record<AppRole, string> = {
   'admin': 'bg-navy-900 text-white border-navy-900',
   'board-member': 'bg-gold text-navy-950 border-gold',
+  'board-secretary': 'bg-indigo-700 text-white border-indigo-700',
   'ceo': 'bg-purple-700 text-white border-purple-700',
   'risk-officer': 'bg-orange-500 text-white border-orange-500',
   'audit-officer': 'bg-blue-700 text-white border-blue-700',
@@ -23,6 +24,7 @@ const ROLE_BADGE_COLORS: Record<AppRole, string> = {
 const ROLE_LABELS: Record<AppRole, string> = {
   'admin': 'Administrator',
   'board-member': 'Board Member',
+  'board-secretary': 'Board Secretary',
   'ceo': 'Chief Executive Officer',
   'risk-officer': 'Risk Officer',
   'audit-officer': 'Audit Officer',
