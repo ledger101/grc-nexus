@@ -3,6 +3,7 @@
 // SECURITY: Uses getUser() — NOT getSession() (getSession() does not validate JWT).
 // SECURITY: force-dynamic prevents ISR caching of authenticated responses.
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
@@ -22,10 +23,42 @@ export default async function ProtectedLayout({ children }: { children: React.Re
     redirect('/register/pending')
   }
 
+  const activeRole = appMeta?.active_role
+
   return (
     <div className="min-h-screen bg-paper">
-      {/* App shell nav is added in a later phase — Phase 1 uses minimal shell */}
-      <main className="max-w-[1200px] mx-auto px-8 pt-8">
+      {/* Sidebar navigation */}
+      <nav className="fixed left-0 top-0 h-full w-[220px] bg-white border-r border-paper-border flex flex-col px-4 py-6 shadow-card z-10">
+        <div className="mb-8">
+          <span className="font-heading text-[18px] font-bold text-navy-950">GRC-Nexus</span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <Link
+            href="/dashboard"
+            className="px-3 py-2 rounded-[6px] text-[14px] font-medium text-navy-900 hover:bg-paper transition-colors"
+          >
+            Dashboard
+          </Link>
+          {/* Strategic — visible to ALL authenticated roles (D-27) */}
+          <Link
+            href="/strategic/objectives"
+            className="px-3 py-2 rounded-[6px] text-[14px] font-medium text-navy-900 hover:bg-paper transition-colors"
+          >
+            Strategic
+          </Link>
+          {/* Admin — role-gated to admin only */}
+          {activeRole === 'admin' && (
+            <Link
+              href="/admin/users"
+              className="px-3 py-2 rounded-[6px] text-[14px] font-medium text-navy-900 hover:bg-paper transition-colors"
+            >
+              Admin
+            </Link>
+          )}
+        </div>
+      </nav>
+      {/* Main content — offset by sidebar width */}
+      <main className="ml-[220px] max-w-[1200px] px-8 pt-8">
         {children}
       </main>
     </div>
