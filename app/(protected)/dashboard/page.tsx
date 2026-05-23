@@ -4,11 +4,14 @@
 // T-13: Adds MFA status display and regenerate backup codes button for admin/board-member.
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
 import { signOut } from '@/lib/auth/actions'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { MFAStatusSection } from './MFAStatusSection'
+import { ExecutiveFilterBar } from './ExecutiveFilterBar'
+import { KpiSummaryCard } from './KpiSummaryCard'
+import { OverdueActionsTable } from './OverdueActionsTable'
+import { getExecutiveDashboardData } from '@/lib/reporting/queries'
 import type { AppRole } from '@/types/auth'
 import { MFA_REQUIRED_ROLES } from '@/types/auth'
 
@@ -38,7 +41,16 @@ const ROLE_BADGE_COLORS: Record<AppRole, string> = {
   'dept-head': 'bg-green-700 text-white border-green-700',
 }
 
-export default async function DashboardPage() {
+function getSingleParam(value: string | string[] | undefined): string | undefined {
+  if (!value) return undefined
+  return Array.isArray(value) ? value[0] : value
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -80,6 +92,13 @@ export default async function DashboardPage() {
 
   const badgeColor = activeRole ? ROLE_BADGE_COLORS[activeRole] : 'bg-gray-200 text-gray-600'
   const roleLabel = activeRole ? (ROLE_LABELS[activeRole] ?? activeRole) : 'No role assigned'
+
+  const executiveData = await getExecutiveDashboardData(supabase, {
+    from: getSingleParam(searchParams.from),
+    to: getSingleParam(searchParams.to),
+    department: getSingleParam(searchParams.department),
+    module: getSingleParam(searchParams.module),
+  })
 
   return (
     <div className="min-h-screen bg-paper">
@@ -130,21 +149,69 @@ export default async function DashboardPage() {
           <MFAStatusSection mfaEnrolled={mfaEnrolled} />
         )}
 
-        {/* Phase 2+ placeholder */}
-        <div className="bg-white rounded-[10px] border border-paper-border shadow-card p-8 text-center">
-          <div className="max-w-sm mx-auto">
-            <div className="h-12 w-12 rounded-full bg-gold-pale flex items-center justify-center mx-auto mb-4">
-              <span className="text-gold text-[20px]">2</span>
-            </div>
-            <h2 className="text-[18px] font-semibold text-navy-900 font-body mb-2">
-              Dashboard content coming soon
-            </h2>
-            <p className="text-[14px] text-navy-mid font-body">
-              Phase 2 will deliver the governance module dashboards — risk register, audit findings,
-              board meetings, and performance scorecards.
+        <div className="mb-6">
+          <ExecutiveFilterBar
+            initialFrom={executiveData.filters.from}
+            initialTo={executiveData.filters.to}
+            initialDepartment={executiveData.filters.department ?? ''}
+            initialModule={executiveData.filters.module}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <KpiSummaryCard
+            title="Objectives"
+            value={executiveData.kpi.objectivesTotal}
+            subtitle="Strategic objectives in scope"
+          />
+          <KpiSummaryCard
+            title="Active Risks"
+            value={executiveData.kpi.activeRisks}
+            subtitle="Open risk records"
+          />
+          <KpiSummaryCard
+            title="Overdue Compliance"
+            value={executiveData.kpi.overdueObligations}
+            subtitle="Past due obligations"
+          />
+          <KpiSummaryCard
+            title="Open Incidents"
+            value={executiveData.kpi.openIncidents}
+            subtitle="Cases not yet closed"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+          <div className="rounded-[10px] border border-paper-border bg-white p-5 shadow-card">
+            <h2 className="text-[16px] font-semibold text-navy-900 font-body">Risk Snapshot</h2>
+            <p className="mt-1 text-[13px] text-navy-mid">
+              {executiveData.riskHeatmapPoints.length.toLocaleString()} active risk points in current scope.
+            </p>
+            <p className="mt-3 text-[13px] text-navy-mid">
+              Use the risk module heatmap for full visualization and drill-down by category.
             </p>
           </div>
+
+          <div className="rounded-[10px] border border-paper-border bg-white p-5 shadow-card">
+            <h2 className="text-[16px] font-semibold text-navy-900 font-body">Compliance Posture</h2>
+            <div className="mt-3 grid grid-cols-3 gap-3">
+              <div>
+                <p className="text-[12px] text-navy-mid">Total</p>
+                <p className="text-[20px] font-bold text-navy-900">{executiveData.compliance.totalObligations}</p>
+              </div>
+              <div>
+                <p className="text-[12px] text-navy-mid">Overdue</p>
+                <p className="text-[20px] font-bold text-orange-600">{executiveData.compliance.overdueCount}</p>
+              </div>
+              <div>
+                <p className="text-[12px] text-navy-mid">Due Soon</p>
+                <p className="text-[20px] font-bold text-blue-700">{executiveData.compliance.expiringCount}</p>
+              </div>
+            </div>
+          </div>
         </div>
+
+        <OverdueActionsTable rows={executiveData.overdueActions} />
 
         {/* Admin quick links */}
         {activeRole === 'admin' && (
