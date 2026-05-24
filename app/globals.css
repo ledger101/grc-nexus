@@ -10,38 +10,82 @@
     --font-dm-sans: 'DM Sans', sans-serif;
     --font-dm-mono: 'DM Mono', monospace;
 
-    /* GRC-Nexus color tokens */
-    --c-ink: #050D1B;
-    --c-ink-mid: #0B1625;
-    --c-paper: #F3F7FD;
-    --c-paper-line: #D7E2EF;
-    --c-gold: #C8A44A;
-    --c-gold-pale: #F3E2BC;
-    --c-ok: #27AE60;
-    --c-warn: #E67E22;
-    --c-err: #E74C3C;
+    /* ── GRC-Nexus semantic color tokens (light mode) ── */
+    /* Note: navy-* are fixed in tailwind.config.ts — NOT CSS vars.        */
+    /* bg-navy-900 is used for intentional dark UI elements in both modes.  */
+    --c-paper:        #F3F7FD;
+    --c-paper-border: #D7E2EF;
+    --c-surface:      #FFFFFF;
+    --c-gold:         #C8A44A;
+    --c-gold-hi:      #DDB96A;
+    --c-gold-pale:    #F3E2BC;
+    --c-ok:           #27AE60;
+    --c-warn:         #E67E22;
+    --c-err:          #E74C3C;
 
-    /* shadcn/ui CSS variables (slate base) */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
+    /* ── Shadows ── */
+    --shadow-card: 0 2px 8px rgba(5, 13, 27, 0.08);
+    --shadow-auth: 0 8px 32px rgba(5, 13, 27, 0.14);
+
+    /* ── shadcn/ui CSS variables (light) ── */
+    --background:          0 0% 100%;
+    --foreground:          222.2 84% 4.9%;
+    --card:                0 0% 100%;
+    --card-foreground:     222.2 84% 4.9%;
+    --popover:             0 0% 100%;
+    --popover-foreground:  222.2 84% 4.9%;
+    --primary:             222.2 47.4% 11.2%;
+    --primary-foreground:  210 40% 98%;
+    --secondary:           210 40% 96.1%;
+    --secondary-foreground:222.2 47.4% 11.2%;
+    --muted:               210 40% 96.1%;
+    --muted-foreground:    215.4 16.3% 46.9%;
+    --accent:              210 40% 96.1%;
+    --accent-foreground:   222.2 47.4% 11.2%;
+    --destructive:         0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+    --border:              214.3 31.8% 91.4%;
+    --input:               214.3 31.8% 91.4%;
+    --ring:                222.2 84% 4.9%;
+    --radius:              0.5rem;
+  }
+
+  .dark {
+    /* ── GRC-Nexus semantic color tokens (dark mode) ── */
+    --c-paper:        #0D1117;
+    --c-paper-border: #1E2D3D;
+    --c-surface:      #161B27;
+    --c-gold:         #C8A44A;
+    --c-gold-hi:      #DDB96A;
+    --c-gold-pale:    #1C160A;
+    --c-ok:           #34D399;
+    --c-warn:         #FBBF24;
+    --c-err:          #F87171;
+
+    /* ── Shadows (dark mode — darker, more opaque) ── */
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --shadow-auth: 0 8px 32px rgba(0, 0, 0, 0.55);
+
+    /* ── shadcn/ui CSS variables (dark) ── */
+    --background:          222.2 84% 4.9%;
+    --foreground:          210 40% 98%;
+    --card:                222.2 84% 4.9%;
+    --card-foreground:     210 40% 98%;
+    --popover:             222.2 84% 4.9%;
+    --popover-foreground:  210 40% 98%;
+    --primary:             210 40% 98%;
+    --primary-foreground:  222.2 47.4% 11.2%;
+    --secondary:           217.2 32.6% 17.5%;
+    --secondary-foreground:210 40% 98%;
+    --muted:               217.2 32.6% 17.5%;
+    --muted-foreground:    215 20.2% 65.1%;
+    --accent:              217.2 32.6% 17.5%;
+    --accent-foreground:   210 40% 98%;
+    --destructive:         0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border:              217.2 32.6% 17.5%;
+    --input:               217.2 32.6% 17.5%;
+    --ring:                212.7 26.8% 83.9%;
   }
 }
 
@@ -57,4 +101,43 @@
   h1, h2, h3 {
     @apply font-heading;
   }
+}
+
+@layer base {
+  /* ── Dark mode: text colour overrides ──────────────────────────────────
+   * navy-950/900/mid are fixed hex values in tailwind.config.ts so that
+   * bg-navy-900 (used on header bars, icon circles, buttons) stays dark
+   * in both themes. We restore text readability here by targeting the
+   * generated utility classes directly. No component files need changing.
+   * ─────────────────────────────────────────────────────────────────── */
+  .dark body                    { color: #CBD5E1; }
+  .dark .text-navy-950          { color: #F1F5F9; }
+  .dark .text-navy-900          { color: #CBD5E1; }
+  .dark .text-navy-mid          { color: #94A3B8; }
+  .dark h1, .dark h2, .dark h3  { color: #F1F5F9; }
+}
+
+@layer utilities {
+  /* ── Dark mode: remap bg-white → themed surface ─────────────────────
+   * Every card, table wrapper, form and filter bar in the app uses
+   * bg-white. This single rule flips all of them to the dark surface
+   * colour without touching individual component files.
+   * ─────────────────────────────────────────────────────────────────── */
+  .dark .bg-white                 { background-color: var(--c-surface); }
+  .dark .hover\:bg-white:hover    { background-color: var(--c-paper-border); }
+
+  /* shadcn select / popover / dropdown interiors */
+  .dark [cmdk-list],
+  .dark [data-radix-popper-content-wrapper] .bg-white { background-color: var(--c-surface); }
+
+  /* Table row hover — gray-50 is nearly white; remap to dark paper in dark mode.
+   * This fixes every table in the app (risk, compliance, objectives, audit,
+   * incidents, admin) without touching individual component files.          */
+  .dark .hover\:bg-gray-50:hover  { background-color: var(--c-paper); }
+
+  /* Gray utility classes used in status badges */
+  .dark .bg-gray-100              { background-color: #1E2D3D; }
+  .dark .text-gray-600            { color: #94A3B8; }
+  .dark .text-gray-400            { color: #64748B; }
+  .dark .border-gray-300          { border-color: #1E2D3D; }
 }
