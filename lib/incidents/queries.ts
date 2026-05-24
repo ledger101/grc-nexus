@@ -44,8 +44,7 @@ export async function getIncidentCaseById(supabase: DbClient, caseId: string) {
       status, visibility, severity, is_anonymous, reported_by_user_id,
       reporter_name, reporter_contact, assigned_investigator_id,
       resolution_summary, sla_due_date, closed_at, created_at, updated_at,
-      user_profiles!assigned_investigator_id ( first_name, last_name ),
-      user_profiles!reported_by_user_id ( first_name, last_name )
+      user_profiles!assigned_investigator_id ( first_name, last_name )
     `)
     .eq('id', caseId)
     .single()
