@@ -16,7 +16,7 @@ import type { KpiFrequency } from '@/types/strategic'
 export const dynamic = 'force-dynamic'
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type KpiReadingRow = {
@@ -41,6 +41,7 @@ type KpiDetailRow = {
 }
 
 export default async function KpiDetailPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -52,7 +53,7 @@ export default async function KpiDetailPage({ params }: PageProps) {
   const { data: kpi } = await supabase
     .from('kpis')
     .select('*, strategic_objectives(id, title), user_profiles!owner_id(first_name, last_name)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (!kpi) redirect('/strategic')
@@ -63,7 +64,7 @@ export default async function KpiDetailPage({ params }: PageProps) {
   const { data: readings } = await supabase
     .from('kpi_readings')
     .select('*')
-    .eq('kpi_id', params.id)
+    .eq('kpi_id', id)
     .order('recorded_at', { ascending: false })
 
   // Compute status from latest reading (D-14, D-15, D-16)
@@ -100,7 +101,7 @@ export default async function KpiDetailPage({ params }: PageProps) {
         </div>
         {canRecord && (
           <Link
-            href={`/strategic/kpis/${params.id}/readings/new`}
+            href={`/strategic/kpis/${id}/readings/new`}
             className="inline-flex items-center px-4 py-2 rounded-[8px] bg-gold text-navy-950 hover:bg-gold-hi text-[13px] font-medium shadow-card transition-colors"
           >
             Record Reading
@@ -164,7 +165,7 @@ export default async function KpiDetailPage({ params }: PageProps) {
             <p className="text-[14px] text-navy-mid">No readings recorded yet.</p>
             {canRecord && (
               <Link
-                href={`/strategic/kpis/${params.id}/readings/new`}
+                href={`/strategic/kpis/${id}/readings/new`}
                 className="text-[14px] text-navy-900 hover:underline font-medium mt-2 inline-block"
               >
                 Record the first reading

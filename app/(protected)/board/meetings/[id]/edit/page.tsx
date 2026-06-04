@@ -7,7 +7,8 @@ export const dynamic = 'force-dynamic'
 
 const WRITE_ROLES = ['admin', 'ceo', 'board-member', 'board-secretary']
 
-export default async function EditMeetingPage({ params }: { params: { id: string } }) {
+export default async function EditMeetingPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -15,9 +16,9 @@ export default async function EditMeetingPage({ params }: { params: { id: string
   const activeRole = (user.app_metadata as Record<string, string>)?.active_role
   if (!activeRole || !WRITE_ROLES.includes(activeRole)) redirect('/board/meetings')
 
-  const meeting = await getMeetingById(supabase, params.id)
+  const meeting = await getMeetingById(supabase, id)
   if (!meeting || meeting.status === 'closed') {
-    redirect(`/board/meetings/${params.id}`)
+    redirect(`/board/meetings/${id}`)
   }
 
   const { data: members } = await supabase

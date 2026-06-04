@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic'
 const WRITE_ROLES: AppRole[] = ['admin', 'compliance-officer']
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type ObligationDetail = {
@@ -32,6 +32,7 @@ type UserProfileRow = {
 }
 
 export default async function EditObligationPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -41,11 +42,11 @@ export default async function EditObligationPage({ params }: PageProps) {
   const activeRole = appMeta?.active_role as AppRole | undefined
 
   if (!activeRole || !WRITE_ROLES.includes(activeRole)) {
-    redirect(`/compliance/obligations/${params.id}`)
+    redirect(`/compliance/obligations/${id}`)
   }
 
   const [obligationResult, profilesResult] = await Promise.all([
-    getObligationById(supabase, params.id),
+    getObligationById(supabase, id),
     supabase
       .from('user_profiles')
       .select('id, first_name, last_name')

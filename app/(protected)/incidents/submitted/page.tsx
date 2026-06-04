@@ -6,17 +6,18 @@ import type { IncidentCategory } from '@/types/incidents'
 export const dynamic = 'force-dynamic'
 
 interface PageProps {
-  searchParams?: {
+  searchParams?: Promise<{
     case?: string
     category?: string
     anonymous?: string
-  }
+  }>
 }
 
-export default function IncidentSubmittedPage({ searchParams }: PageProps) {
-  const caseReference = searchParams?.case || 'Pending'
-  const category = (searchParams?.category as IncidentCategory | undefined) ?? 'other'
-  const isAnonymous = searchParams?.anonymous === '1'
+export default async function IncidentSubmittedPage({ searchParams }: PageProps) {
+  const params = await searchParams
+  const caseReference = params?.case || 'Pending'
+  const category = (params?.category as IncidentCategory | undefined) ?? 'other'
+  const isAnonymous = params?.anonymous === '1'
 
   return (
     <div className="mx-auto max-w-2xl rounded-[10px] border border-paper-border bg-white p-8 shadow-card">

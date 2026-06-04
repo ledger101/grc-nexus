@@ -49,13 +49,13 @@ BEGIN
   END IF;
 
   -- Load profile fields
-  SELECT up.institution_id, up.department_id, up.status
+  SELECT up.institution_id, up.dept_id, up.status
   INTO   v_institution, v_dept, v_status
   FROM   public.user_profiles up
   WHERE  up.id = v_user_id;
 
   -- Aggregate roles
-  SELECT ARRAY_AGG(ur.role ORDER BY ur.role)
+  SELECT ARRAY_AGG(ur.role_name::text ORDER BY ur.role_name)
   INTO   v_roles
   FROM   public.user_roles ur
   WHERE  ur.user_id = v_user_id;

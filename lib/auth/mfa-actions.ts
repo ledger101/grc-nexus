@@ -91,7 +91,7 @@ export async function completeMFAChallengeAction(
  * Complete MFA challenge using a backup recovery code.
  * Marks the used code as consumed and optionally sets device trust.
  */
-export async function useBackupCodeAction(code: string, trustDevice: boolean) {
+export async function verifyBackupCodeAction(code: string, trustDevice: boolean) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Session expired. Please sign in again.' }

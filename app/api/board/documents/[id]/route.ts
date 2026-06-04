@@ -13,8 +13,9 @@ const VIEW_ROLES: AppRole[] = [
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -31,7 +32,7 @@ export async function GET(
   const { data: doc, error: dbErr } = await supabase
     .from('board_meeting_documents')
     .select('storage_path, sha256_hash, original_filename, mime_type, file_size_bytes')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (dbErr || !doc) {

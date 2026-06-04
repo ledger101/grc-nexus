@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
 export const metadata = { title: 'Record Reading — GRC-Nexus' }
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type KpiReadingContext = {
@@ -25,6 +25,7 @@ type KpiReadingContext = {
 }
 
 export default async function NewReadingPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -32,7 +33,7 @@ export default async function NewReadingPage({ params }: PageProps) {
   const { data: kpi } = await supabase
     .from('kpis')
     .select('id, title, reporting_frequency, unit_of_measure, owner_id, target_value')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (!kpi) redirect('/strategic')

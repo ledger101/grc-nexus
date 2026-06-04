@@ -52,8 +52,9 @@ function getSingleParam(value: string | string[] | undefined): string | undefine
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Record<string, string | string[] | undefined>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }) {
+  const params = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -97,10 +98,10 @@ export default async function DashboardPage({
   const roleLabel = activeRole ? (ROLE_LABELS[activeRole] ?? activeRole) : 'No role assigned'
 
   const executiveData = await getExecutiveDashboardData(supabase, {
-    from: getSingleParam(searchParams.from),
-    to: getSingleParam(searchParams.to),
-    department: getSingleParam(searchParams.department),
-    module: getSingleParam(searchParams.module),
+    from: getSingleParam(params.from),
+    to: getSingleParam(params.to),
+    department: getSingleParam(params.department),
+    module: getSingleParam(params.module),
   })
 
   const canExportGovernanceReport = activeRole

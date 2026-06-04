@@ -11,7 +11,8 @@ const VIEW_ROLES = ['admin', 'ceo', 'board-member', 'board-secretary', 'audit-of
 const WRITE_ROLES = ['admin', 'ceo', 'board-member', 'board-secretary']
 const RECORD_ROLES = ['admin', 'ceo', 'board-member', 'board-secretary']
 
-export default async function MeetingDetailPage({ params }: { params: { id: string } }) {
+export default async function MeetingDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -19,15 +20,15 @@ export default async function MeetingDetailPage({ params }: { params: { id: stri
   const activeRole = (user.app_metadata as Record<string, string>)?.active_role
   if (!activeRole || !VIEW_ROLES.includes(activeRole)) redirect('/board')
 
-  const meeting = await getMeetingById(supabase, params.id)
+  const meeting = await getMeetingById(supabase, id)
   if (!meeting) {
     redirect('/board/meetings')
   }
 
   const [documents, resolutions, actionItems] = await Promise.all([
-    listDocuments(supabase, params.id),
-    listResolutions(supabase, params.id),
-    listActionItems(supabase, params.id),
+    listDocuments(supabase, id),
+    listResolutions(supabase, id),
+    listActionItems(supabase, id),
   ])
 
   const isClosed = meeting.status === 'closed'

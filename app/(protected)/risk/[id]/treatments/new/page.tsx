@@ -9,13 +9,14 @@ export const dynamic = 'force-dynamic'
 const WRITE_ROLES: AppRole[] = ['admin', 'ceo', 'risk-officer']
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type RiskTitleRow = { title: string }
 type RiskOwnerRow = { id: string; first_name: string | null; last_name: string | null }
 
 export default async function NewTreatmentPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -29,7 +30,7 @@ export default async function NewTreatmentPage({ params }: PageProps) {
   }
 
   const [riskResult, ownersResult] = await Promise.all([
-    getRiskById(supabase, params.id),
+    getRiskById(supabase, id),
     listRiskOwners(supabase),
   ])
 
@@ -48,7 +49,7 @@ export default async function NewTreatmentPage({ params }: PageProps) {
       </div>
 
       <TreatmentForm
-        riskId={params.id}
+        riskId={id}
         owners={owners.map((row) => ({
           id: row.id,
           first_name: row.first_name,

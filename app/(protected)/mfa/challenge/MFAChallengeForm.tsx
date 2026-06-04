@@ -5,7 +5,10 @@
 // Shake animation on wrong code: 3-cycle, 4px horizontal, 120ms.
 import { useState, useTransition } from 'react'
 import { Loader2, RefreshCw } from 'lucide-react'
-import { completeMFAChallengeAction, useBackupCodeAction } from '@/lib/auth/mfa-actions'
+import {
+  completeMFAChallengeAction,
+  verifyBackupCodeAction,
+} from '@/lib/auth/mfa-actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -59,9 +62,10 @@ export function MFAChallengeForm({ totpFactorId, hasEmailOTP, userEmail }: MFACh
 
   function handleBackupCodeVerify() {
     if (!backupCode.trim()) return
+    const trimmedBackupCode = backupCode.trim()
     setError(null)
     startTransition(async () => {
-      const result = await useBackupCodeAction(backupCode.trim(), trustDevice)
+      const result = await verifyBackupCodeAction(trimmedBackupCode, trustDevice)
       if (result?.error) {
         handleError(result.error)
       }

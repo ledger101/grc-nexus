@@ -14,8 +14,9 @@ const VIEW_ROLES: AppRole[] = [
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params
   // Step 1: Auth check — always use getUser(), never getSession() (RESEARCH.md anti-patterns)
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -35,7 +36,7 @@ export async function GET(
   const { data: evidenceRaw, error: dbError } = await supabase
     .from('obligation_evidence')
     .select('storage_path, sha256_hash, original_filename, mime_type')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   interface EvidenceRecord {

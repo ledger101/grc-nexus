@@ -33,7 +33,7 @@ const ATTEST_ROLES: AppRole[] = ['admin', 'ceo', 'compliance-officer']
 const WRITE_ROLES: AppRole[] = ['admin', 'compliance-officer']
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type ObligationDetail = {
@@ -100,6 +100,7 @@ function formatDate(isoString: string): string {
 }
 
 export default async function ObligationDetailPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -114,9 +115,9 @@ export default async function ObligationDetailPage({ params }: PageProps) {
 
   // Parallel fetch: obligation detail + evidence list + attestation history
   const [obligationResult, evidenceResult, attestationsResult] = await Promise.all([
-    getObligationById(supabase, params.id),
-    listEvidence(supabase, params.id),
-    listAttestations(supabase, params.id),
+    getObligationById(supabase, id),
+    listEvidence(supabase, id),
+    listAttestations(supabase, id),
   ])
 
   if (obligationResult.error || !obligationResult.data) {

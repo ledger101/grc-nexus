@@ -7,17 +7,18 @@ export const dynamic = 'force-dynamic'
 
 const RECORD_ROLES = ['admin', 'ceo', 'board-member', 'board-secretary']
 
-export default async function NewResolutionPage({ params }: { params: { id: string } }) {
+export default async function NewResolutionPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
   const activeRole = (user.app_metadata as Record<string, string>)?.active_role
-  if (!activeRole || !RECORD_ROLES.includes(activeRole)) redirect(`/board/meetings/${params.id}`)
+  if (!activeRole || !RECORD_ROLES.includes(activeRole)) redirect(`/board/meetings/${id}`)
 
-  const meeting = await getMeetingById(supabase, params.id)
+  const meeting = await getMeetingById(supabase, id)
   if (!meeting || meeting.status !== 'in_progress') {
-    redirect(`/board/meetings/${params.id}`)
+    redirect(`/board/meetings/${id}`)
   }
 
   const { data: profiles } = await supabase
@@ -34,7 +35,7 @@ export default async function NewResolutionPage({ params }: { params: { id: stri
     <div>
       <h1 className="mb-1 text-[28px] font-heading font-semibold text-navy-950">Record Resolution</h1>
       <p className="mb-6 text-[14px] text-navy-mid">Meeting must be in progress to record resolutions.</p>
-      <ResolutionForm meetingId={params.id} members={members} />
+      <ResolutionForm meetingId={id} members={members} />
     </div>
   )
 }

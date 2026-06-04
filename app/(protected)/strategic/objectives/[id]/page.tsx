@@ -25,7 +25,7 @@ const EDIT_ROLES: AppRole[] = ['admin', 'ceo']
 const KPI_CREATE_ROLES: AppRole[] = ['admin', 'ceo', 'risk-officer']
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type ObjectiveOwner = { first_name: string | null; last_name: string | null }
@@ -53,6 +53,7 @@ type ObjectiveKpiRow = {
 }
 
 export default async function ObjectiveDetailPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -64,7 +65,7 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
   const { data: objective } = await supabase
     .from('strategic_objectives')
     .select('*, user_profiles!owner_id(first_name, last_name)')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   // If objective not found (or belongs to another institution, RLS returns null) → redirect
@@ -78,7 +79,7 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
   const { data: kpis } = await supabase
     .from('kpis')
     .select('id, title, unit_of_measure, target_value, reporting_frequency, owner_id, user_profiles!owner_id(first_name, last_name)')
-    .eq('objective_id', params.id)
+    .eq('objective_id', id)
     .order('created_at', { ascending: false })
 
   const kpiRows = (kpis ?? []) as unknown as ObjectiveKpiRow[]
@@ -114,7 +115,7 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
         </div>
         {canEdit && (
           <Link
-            href={`/strategic/objectives/${params.id}/edit`}
+            href={`/strategic/objectives/${id}/edit`}
             className="inline-flex items-center px-4 py-2 rounded-[8px] bg-gold text-navy-950 hover:bg-gold-hi text-[13px] font-medium shadow-card transition-colors"
           >
             Edit Objective
@@ -166,7 +167,7 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
           <h2 className="text-[16px] font-semibold text-navy-900">Linked KPIs</h2>
           {canAddKpi && (
             <Link
-              href={`/strategic/kpis/new?objective_id=${params.id}`}
+              href={`/strategic/kpis/new?objective_id=${id}`}
               className="inline-flex items-center px-3 py-1.5 rounded-[6px] bg-gold text-navy-950 hover:bg-gold-hi text-[13px] font-medium shadow-card transition-colors"
             >
               Add KPI
@@ -179,7 +180,7 @@ export default async function ObjectiveDetailPage({ params }: PageProps) {
             <p className="text-[14px] text-navy-mid">No KPIs linked to this objective yet.</p>
             {canAddKpi && (
               <Link
-                href={`/strategic/kpis/new?objective_id=${params.id}`}
+                href={`/strategic/kpis/new?objective_id=${id}`}
                 className="text-[14px] text-navy-900 hover:underline font-medium mt-2 inline-block"
               >
                 Add the first KPI
