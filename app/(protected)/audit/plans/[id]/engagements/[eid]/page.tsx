@@ -73,10 +73,11 @@ type EngagementDetail = {
 }
 
 interface PageProps {
-  params: { id: string; eid: string }
+  params: Promise<{ id: string; eid: string }>
 }
 
 export default async function EngagementDetailPage({ params }: PageProps) {
+  const { id, eid } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -85,7 +86,7 @@ export default async function EngagementDetailPage({ params }: PageProps) {
   const activeRole = appMeta?.active_role as AppRole | undefined
   if (!activeRole || !VIEW_ROLES.includes(activeRole)) redirect('/dashboard')
 
-  const { data } = await getAuditEngagementById(supabase, params.eid)
+  const { data } = await getAuditEngagementById(supabase, eid)
   if (!data) notFound()
 
   const eng = data as unknown as EngagementDetail
@@ -98,7 +99,7 @@ export default async function EngagementDetailPage({ params }: PageProps) {
       <p className="mb-2 text-[14px] text-navy-mid">
         <Link href="/audit/plans" className="hover:underline">Plans</Link>
         {' / '}
-        <Link href={`/audit/plans/${params.id}`} className="hover:underline">Plan</Link>
+        <Link href={`/audit/plans/${id}`} className="hover:underline">Plan</Link>
         {' / '}
         <span className="text-navy-900">{eng.title}</span>
       </p>
@@ -115,7 +116,7 @@ export default async function EngagementDetailPage({ params }: PageProps) {
         </div>
         {canManage && (
           <Link
-            href={`/audit/plans/${params.id}/engagements/${params.eid}/workpapers/new`}
+            href={`/audit/plans/${id}/engagements/${eid}/workpapers/new`}
             className="inline-flex items-center rounded-[8px] border border-paper-border bg-white px-4 py-2 text-[13px] font-medium text-navy-900 hover:bg-paper"
           >
             Add Workpaper
@@ -210,7 +211,7 @@ export default async function EngagementDetailPage({ params }: PageProps) {
                     {proc.notes && <p className="mt-1 text-[12px] italic text-navy-mid">{proc.notes}</p>}
                     {canManage && (
                       <div className="mt-3">
-                        <ProcedureResultForm procedureId={proc.id} currentResult={proc.result} engagementId={eng.id} planId={params.id} />
+                        <ProcedureResultForm procedureId={proc.id} currentResult={proc.result} engagementId={eng.id} planId={id} />
                       </div>
                     )}
                   </div>
@@ -222,7 +223,7 @@ export default async function EngagementDetailPage({ params }: PageProps) {
           {canManage && (
             <div className="rounded-[10px] border border-paper-border bg-white p-6 shadow-card">
               <h2 className="mb-4 text-[13px] font-semibold uppercase tracking-wide text-navy-900">Add Test Procedure</h2>
-              <AddProcedureForm engagementId={eng.id} nextStep={(procedures[procedures.length - 1]?.step_number ?? 0) + 1} planId={params.id} />
+              <AddProcedureForm engagementId={eng.id} nextStep={(procedures[procedures.length - 1]?.step_number ?? 0) + 1} planId={id} />
             </div>
           )}
         </div>

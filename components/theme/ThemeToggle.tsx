@@ -11,7 +11,7 @@ interface ThemeToggleProps {
 
 export function ThemeToggle({ collapsed }: ThemeToggleProps) {
   const [mounted, setMounted] = useState(false)
-  const { theme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
 
   // Avoid hydration mismatch — render nothing until mounted on the client
   useEffect(() => setMounted(true), [])
@@ -21,7 +21,7 @@ export function ThemeToggle({ collapsed }: ThemeToggleProps) {
     return <div className="h-8 w-8" aria-hidden="true" />
   }
 
-  const isDark = theme === 'dark'
+  const isDark = resolvedTheme === 'dark'
 
   return (
     <button
@@ -29,7 +29,7 @@ export function ThemeToggle({ collapsed }: ThemeToggleProps) {
       title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
       className={`p-1.5 rounded-[6px] text-navy-mid hover:bg-paper-border transition-colors flex items-center gap-2 flex-shrink-0 ${
-        collapsed ? 'justify-center w-full' : ''
+        collapsed ? 'justify-center border border-paper-border bg-paper' : ''
       }`}
     >
       {isDark ? (

@@ -20,7 +20,7 @@ import { ForecastChart } from '@/components/analytics/ForecastChart'
 export const dynamic = 'force-dynamic'
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type KriReadingRow = {
@@ -51,6 +51,7 @@ type KriDetailRow = {
 const VIEW_ROLES: AppRole[] = ['admin', 'ceo', 'risk-officer', 'audit-officer', 'board-member', 'dept-head']
 
 export default async function KriDetailPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -60,7 +61,7 @@ export default async function KriDetailPage({ params }: PageProps) {
 
   if (!activeRole || !VIEW_ROLES.includes(activeRole)) redirect('/risk/kris')
 
-  const { data } = await getKriById(supabase, params.id)
+  const { data } = await getKriById(supabase, id)
   if (!data) redirect('/risk/kris')
 
   const kri      = data as unknown as KriDetailRow

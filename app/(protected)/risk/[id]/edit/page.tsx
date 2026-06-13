@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 const EDIT_ROLES: AppRole[] = ['admin', 'ceo', 'risk-officer']
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type EditableRisk = {
@@ -29,6 +29,7 @@ type EditableRisk = {
 }
 
 export default async function EditRiskPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -38,11 +39,11 @@ export default async function EditRiskPage({ params }: PageProps) {
   const activeRole = appMeta?.active_role as AppRole | undefined
 
   if (!activeRole || !EDIT_ROLES.includes(activeRole)) {
-    redirect(`/risk/${params.id}`)
+    redirect(`/risk/${id}`)
   }
 
   const [riskResult, objectivesResult, ownersResult] = await Promise.all([
-    getRiskById(supabase, params.id),
+    getRiskById(supabase, id),
     listObjectiveOptions(supabase),
     listRiskOwners(supabase),
   ])

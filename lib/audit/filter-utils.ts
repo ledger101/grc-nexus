@@ -18,10 +18,10 @@ export function parseAuditMetadata(metadata: Json | null): ParsedAuditMetadata {
     return { module: null, department: null }
   }
 
-  const module = typeof obj.module === 'string' ? obj.module : null
+  const moduleName = typeof obj.module === 'string' ? obj.module : null
   const department = typeof obj.department === 'string'
     ? obj.department
     : (typeof obj.department_id === 'string' ? obj.department_id : null)
 
-  return { module, department }
+  return { module: moduleName, department }
 }

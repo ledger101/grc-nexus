@@ -15,7 +15,8 @@ export const dynamic = 'force-dynamic'
 const VIEW_ROLES: AppRole[] = ['admin', 'ceo', 'compliance-officer', 'risk-officer', 'audit-officer', 'board-member']
 const WRITE_ROLES: AppRole[] = ['admin', 'compliance-officer', 'audit-officer']
 
-export default async function EsgMetricDetailPage({ params }: { params: { id: string } }) {
+export default async function EsgMetricDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -24,10 +25,10 @@ export default async function EsgMetricDetailPage({ params }: { params: { id: st
   const activeRole = appMeta?.active_role as AppRole | undefined
   if (!activeRole || !VIEW_ROLES.includes(activeRole)) redirect('/dashboard')
 
-  const metric   = await getEsgMetricById(supabase, params.id)
+  const metric   = await getEsgMetricById(supabase, id)
   if (!metric) notFound()
 
-  const readings = await listEsgReadings(supabase, params.id)
+  const readings = await listEsgReadings(supabase, id)
   const canWrite = WRITE_ROLES.includes(activeRole)
 
   return (

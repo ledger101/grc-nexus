@@ -17,10 +17,11 @@ const VIEW_ROLES: AppRole[] = [
 ]
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function IncidentCaseDetailPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const {
     data: { user },
@@ -36,9 +37,9 @@ export default async function IncidentCaseDetailPage({ params }: PageProps) {
   }
 
   const [caseResult, eventsResult, evidenceResult, investigatorResult] = await Promise.all([
-    getIncidentCaseById(supabase, params.id),
-    listIncidentEvents(supabase, params.id),
-    listIncidentEvidence(supabase, params.id),
+    getIncidentCaseById(supabase, id),
+    listIncidentEvents(supabase, id),
+    listIncidentEvidence(supabase, id),
     supabase
       .from('user_profiles')
       .select('id, first_name, last_name, active_role, status')

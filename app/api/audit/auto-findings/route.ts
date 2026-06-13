@@ -2,6 +2,7 @@
 // CRON route: scan failed test procedures and auto-create audit findings if none exist.
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { SUPABASE_URL } from '@/lib/supabase/config'
 
 export const runtime = 'nodejs'
 
@@ -11,14 +12,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey  = process.env.SUPABASE_SERVICE_ROLE_KEY
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  if (!supabaseUrl || !serviceKey) {
-    return NextResponse.json({ error: 'Supabase config missing' }, { status: 500 })
+  if (!serviceKey) {
+    return NextResponse.json({ error: 'Supabase service key missing' }, { status: 500 })
   }
 
-  const admin = createAdminClient(supabaseUrl, serviceKey)
+  const admin = createAdminClient(SUPABASE_URL, serviceKey)
 
   // 1. Fetch all failed procedures that have no linked audit finding
   const { data: failedProcs, error: procErr } = await admin

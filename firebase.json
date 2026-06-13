@@ -3,8 +3,18 @@
     "source": ".",
     "ignore": [
       "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
+      "**/.env*",
+      "**/node_modules/**",
+      ".github/**",
+      ".planning/**",
+      "tests/**",
+      "scripts/**",
+      "CLAUDE.md",
+      "STATUS.md",
+      "*.md",
+      "*.txt",
+      "*.zip",
+      "*.tar.gz"
     ],
     "frameworksBackend": {
       "region": "us-central1"

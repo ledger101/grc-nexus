@@ -14,7 +14,13 @@ function escapeHtml(str: string): string {
     .replace(/"/g, '&quot;')
 }
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let resendInstance: Resend | null = null
+function getResend(): Resend | null {
+  const key = process.env.RESEND_API_KEY
+  if (!key || key === 're_xxxx' || key === 're_test') return null
+  if (!resendInstance) resendInstance = new Resend(key)
+  return resendInstance
+}
 
 interface KciBreach {
   id:            string
@@ -107,6 +113,9 @@ export async function sendKciBreachAlerts(): Promise<{ sent: number; skipped: nu
 </table>
 <p>Please review this KCI and verify that related controls remain effective.</p>
 `
+
+    const resend = getResend()
+    if (!resend) { skipped++; continue }
 
     try {
       await resend.emails.send({

@@ -1,10 +1,10 @@
 // middleware.ts
-// Session refresh + route protection + MFA gate
+// Session refresh + route protection + MFA gate.
 // SECURITY: Uses getUser() exclusively — getSession() is FORBIDDEN here (does not validate JWT)
 // SECURITY: Never reads SUPABASE_SERVICE_ROLE_KEY — anon key only in middleware
-import { createServerClient } from '@supabase/ssr'
 import { NextRequest, NextResponse } from 'next/server'
 import { MFA_REQUIRED_ROLES } from '@/types/auth'
+import { createMiddlewareClient } from '@/lib/supabase/middleware'
 
 // Routes that do NOT require authentication
 const PUBLIC_ROUTES = ['/login', '/register', '/auth/confirm', '/auth/callback', '/register/pending']
@@ -13,32 +13,18 @@ const PUBLIC_ROUTES = ['/login', '/register', '/auth/confirm', '/auth/callback',
 const DEVICE_TRUST_COOKIE = 'grc_device_trust'
 
 export async function middleware(request: NextRequest) {
-  let response = NextResponse.next({
-    request: { headers: request.headers },
-  })
+  const { supabase, response } = createMiddlewareClient(request)
+  const path = request.nextUrl.pathname
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
+  // API routes handle their own auth responses; never redirect API clients to /login.
+  if (path.startsWith('/api/')) {
+    return response
+  }
 
   // ALWAYS call getUser() to refresh token — this is the session refresh mechanism.
   // Do NOT use getSession() — it reads cookies locally without JWT validation.
   const { data: { user } } = await supabase.auth.getUser()
 
-  const path = request.nextUrl.pathname
   const isPublicRoute = PUBLIC_ROUTES.some(r => path.startsWith(r))
 
   // API routes handle their own auth (401/403) — never redirect them to /login

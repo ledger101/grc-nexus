@@ -14,12 +14,13 @@ export const metadata = { title: 'Edit Objective — GRC-Nexus' }
 const EDIT_ROLES: AppRole[] = ['admin', 'ceo']
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type ObjectiveOwnerOption = { id: string; first_name: string | null; last_name: string | null }
 
 export default async function EditObjectivePage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -29,14 +30,14 @@ export default async function EditObjectivePage({ params }: PageProps) {
 
   // Role-gate: only admin and ceo may edit objectives
   if (!activeRole || !EDIT_ROLES.includes(activeRole)) {
-    redirect(`/strategic/objectives/${params.id}`)
+    redirect(`/strategic/objectives/${id}`)
   }
 
   // Fetch objective — RLS ensures it belongs to user's institution
   const { data: objective } = await supabase
     .from('strategic_objectives')
     .select('*')
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
 
   if (!objective) {

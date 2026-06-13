@@ -25,17 +25,12 @@ export default async function ProtectedLayout({ children }: { children: React.Re
     redirect('/register/pending')
   }
 
-  // If institution_id is missing from app_metadata the JWT is stale (issued before
-  // raw_app_meta_data was seeded). Redirect to the refresh Route Handler which can
-  // write new cookies, then come back to dashboard with a valid token.
-  // Server Components cannot write cookies directly — the Route Handler can.
   if (!appMeta?.institution_id) {
     redirect('/api/auth/refresh?next=/dashboard')
   }
 
   const activeRole = appMeta?.active_role ?? ''
 
-  // Fetch 10 most recent notifications for the bell (graceful — empty on error)
   const { data: notifData } = await supabase
     .from('notifications')
     .select('id, institution_id, user_id, title, body, link, source_module, read_at, created_at')
@@ -48,9 +43,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   return (
     <SidebarLayout
       activeRole={activeRole}
-      notificationBell={
-        <NotificationBell initialNotifications={notifications} userId={user.id} />
-      }
+      notificationBell={<NotificationBell initialNotifications={notifications} userId={user.id} />}
     >
       {children}
     </SidebarLayout>

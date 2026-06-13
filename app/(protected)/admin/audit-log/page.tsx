@@ -25,8 +25,9 @@ const AUDIT_ACTIONS: AuditAction[] = ['INSERT', 'UPDATE', 'DELETE', 'AUTH']
 export default async function AuditLogPage({
   searchParams,
 }: {
-  searchParams: Record<string, string>
+  searchParams: Promise<Record<string, string>>
 }) {
+  const params = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -42,17 +43,17 @@ export default async function AuditLogPage({
   }
 
   // Parse filter params from URL
-  const actor = searchParams.actor ?? ''
-  const actionParam = searchParams.action ?? ''
+  const actor = params.actor ?? ''
+  const actionParam = params.action ?? ''
   const action = AUDIT_ACTIONS.includes(actionParam as AuditAction)
     ? (actionParam as AuditAction)
     : ''
-  const table = searchParams.table ?? ''
-  const from = searchParams.from ?? ''
-  const to = searchParams.to ?? ''
-  const moduleFilter = searchParams.module ?? ''
-  const departmentFilter = searchParams.department ?? ''
-  const page = Math.max(1, parseInt(searchParams.page ?? '1', 10))
+  const table = params.table ?? ''
+  const from = params.from ?? ''
+  const to = params.to ?? ''
+  const moduleFilter = params.module ?? ''
+  const departmentFilter = params.department ?? ''
+  const page = Math.max(1, parseInt(params.page ?? '1', 10))
   const offset = (page - 1) * PAGE_SIZE
 
   // Build query

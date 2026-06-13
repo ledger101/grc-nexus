@@ -5,7 +5,7 @@
 // Step 2A: TOTP QR + verification
 // Step 2B: Email OTP verification
 // Step 3: Backup codes (shared)
-import { useState, useEffect, useTransition } from 'react'
+import { useState, useEffect, useTransition, useCallback } from 'react'
 import { Smartphone, Mail, ChevronRight, Loader2, RefreshCw } from 'lucide-react'
 import { QRCodeSVG } from 'qrcode.react'
 import { Button } from '@/components/ui/button'
@@ -44,6 +44,24 @@ export function MFASetupForm() {
   const [backupCodes, setBackupCodes] = useState<string[]>([])
   const [isCompleting, setIsCompleting] = useState(false)
 
+  const sendEmailOTP = useCallback(async () => {
+    try {
+      const res = await fetch('/api/mfa/email-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'send' }),
+      })
+      if (res.ok) {
+        setEmailSent(true)
+        setEmailResendCooldown(60)
+      } else {
+        setError('Failed to send verification code. Please try again.')
+      }
+    } catch {
+      setError('Network error. Please try again.')
+    }
+  }, [])
+
   // Load TOTP QR on entering TOTP setup
   useEffect(() => {
     if (method === 'totp' && step === 'setup') {
@@ -64,7 +82,7 @@ export function MFASetupForm() {
     if (method === 'email-otp' && step === 'setup' && !emailSent) {
       sendEmailOTP()
     }
-  }, [method, step])
+  }, [emailSent, method, sendEmailOTP, step])
 
   // Resend cooldown countdown
   useEffect(() => {
@@ -74,24 +92,6 @@ export function MFASetupForm() {
     }, 1000)
     return () => clearInterval(timer)
   }, [emailResendCooldown])
-
-  async function sendEmailOTP() {
-    try {
-      const res = await fetch('/api/mfa/email-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'send' }),
-      })
-      if (res.ok) {
-        setEmailSent(true)
-        setEmailResendCooldown(60)
-      } else {
-        setError('Failed to send verification code. Please try again.')
-      }
-    } catch {
-      setError('Network error. Please try again.')
-    }
-  }
 
   function handleMethodSelect(selected: Method) {
     setMethod(selected)

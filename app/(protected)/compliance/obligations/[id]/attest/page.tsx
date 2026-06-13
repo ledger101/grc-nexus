@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
 const ATTEST_ROLES: AppRole[] = ['admin', 'ceo', 'compliance-officer']
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type ObligationSummary = {
@@ -23,6 +23,7 @@ type ObligationSummary = {
 }
 
 export default async function AttestObligationPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -33,10 +34,10 @@ export default async function AttestObligationPage({ params }: PageProps) {
 
   // Redirect non-ATTEST_ROLES back to obligation detail (T-4-05-S2 page-level guard)
   if (!activeRole || !ATTEST_ROLES.includes(activeRole)) {
-    redirect(`/compliance/obligations/${params.id}`)
+    redirect(`/compliance/obligations/${id}`)
   }
 
-  const { data, error } = await getObligationById(supabase, params.id)
+  const { data, error } = await getObligationById(supabase, id)
 
   if (error || !data) {
     notFound()
@@ -62,7 +63,7 @@ export default async function AttestObligationPage({ params }: PageProps) {
       </div>
 
       <AttestationForm
-        obligationId={params.id}
+        obligationId={id}
         obligationTitle={obligation.title}
         obligationFramework={obligation.framework}
         obligationDueDate={obligation.due_date}

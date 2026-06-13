@@ -69,12 +69,13 @@ export async function sendAnomalyAlerts(): Promise<{ sent: number; skipped: numb
   const groups = new Map<string, MetricGroup>()
 
   for (const r of kpiReadings ?? []) {
-    const kpi = (r as any).kpis
+    const row = r as any
+    const kpi = row.kpis
     if (!kpi) continue
-    const key = `kpi:${r.kpi_id}`
+    const key = `kpi:${row.kpi_id}`
     if (!groups.has(key)) {
       groups.set(key, {
-        metricId: r.kpi_id,
+        metricId: row.kpi_id as string,
         metricTitle: kpi.title,
         metricType: 'KPI',
         unit: kpi.unit_of_measure ?? '',
@@ -84,16 +85,17 @@ export async function sendAnomalyAlerts(): Promise<{ sent: number; skipped: numb
         readings: [],
       })
     }
-    groups.get(key)!.readings.push({ actual_value: r.actual_value, recorded_at: r.recorded_at })
+    groups.get(key)!.readings.push({ actual_value: row.actual_value as number, recorded_at: row.recorded_at as string })
   }
 
   for (const r of kriReadings ?? []) {
-    const kri = (r as any).kri_definitions
+    const row = r as any
+    const kri = row.kri_definitions
     if (!kri) continue
-    const key = `kri:${r.kri_id}`
+    const key = `kri:${row.kri_id}`
     if (!groups.has(key)) {
       groups.set(key, {
-        metricId: r.kri_id,
+        metricId: row.kri_id as string,
         metricTitle: kri.title,
         metricType: 'KRI',
         unit: kri.unit ?? '',
@@ -103,7 +105,7 @@ export async function sendAnomalyAlerts(): Promise<{ sent: number; skipped: numb
         readings: [],
       })
     }
-    groups.get(key)!.readings.push({ actual_value: r.actual_value, recorded_at: r.recorded_at })
+    groups.get(key)!.readings.push({ actual_value: row.actual_value as number, recorded_at: row.recorded_at as string })
   }
 
   for (const [, group] of groups) {

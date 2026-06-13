@@ -23,7 +23,8 @@ const SEVERITY_CLASSES: Record<NcSeverity, string> = {
   critical: 'bg-red-50 text-red-700 border border-red-200',
 }
 
-export default async function NcDetailPage({ params }: { params: { id: string } }) {
+export default async function NcDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -32,7 +33,7 @@ export default async function NcDetailPage({ params }: { params: { id: string } 
   const activeRole = appMeta?.active_role as AppRole | undefined
   if (!activeRole || !VIEW_ROLES.includes(activeRole)) redirect('/dashboard')
 
-  const nc = await getNonConformanceById(supabase, params.id)
+  const nc = await getNonConformanceById(supabase, id)
   if (!nc) notFound()
 
   const canWrite = WRITE_ROLES.includes(activeRole)

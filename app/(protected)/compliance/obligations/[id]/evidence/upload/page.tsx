@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic'
 const WRITE_ROLES: AppRole[] = ['admin', 'compliance-officer']
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type ObligationSummary = {
@@ -22,6 +22,7 @@ type ObligationSummary = {
 }
 
 export default async function EvidenceUploadPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -32,10 +33,10 @@ export default async function EvidenceUploadPage({ params }: PageProps) {
 
   // Redirect non-WRITE_ROLES back to obligation detail (T-4-05-S)
   if (!activeRole || !WRITE_ROLES.includes(activeRole)) {
-    redirect(`/compliance/obligations/${params.id}`)
+    redirect(`/compliance/obligations/${id}`)
   }
 
-  const { data, error } = await getObligationById(supabase, params.id)
+  const { data, error } = await getObligationById(supabase, id)
 
   if (error || !data) {
     notFound()
@@ -61,7 +62,7 @@ export default async function EvidenceUploadPage({ params }: PageProps) {
       </div>
 
       <EvidenceUploadForm
-        obligationId={params.id}
+        obligationId={id}
         obligationTitle={obligation.title}
         obligationFramework={obligation.framework}
       />

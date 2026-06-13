@@ -1,6 +1,3 @@
-import { Resend } from 'resend'
-import { createAdminClient } from '@/lib/supabase/admin'
-import { getAuditEscalationThreshold } from '@/lib/audit/audit-utils'
 import type { AuditEscalationTarget } from '@/lib/audit/queries'
 
 function escapeHtml(str: string): string {
@@ -11,11 +8,16 @@ function escapeHtml(str: string): string {
     .replace(/"/g, '&quot;')
 }
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
+// Lazy-load Resend to avoid build-time errors when RESEND_API_KEY is not available
 export async function sendAuditEscalationEmails(
   findings: AuditEscalationTarget[],
 ): Promise<{ sent: number; skipped: number }> {
+  const { Resend } = await import('resend')
+  const resend = new Resend(process.env.RESEND_API_KEY)
+
+  const { createAdminClient } = await import('@/lib/supabase/admin')
+  const { getAuditEscalationThreshold } = await import('@/lib/audit/audit-utils')
+
   const admin = createAdminClient()
   let sent = 0
   let skipped = 0

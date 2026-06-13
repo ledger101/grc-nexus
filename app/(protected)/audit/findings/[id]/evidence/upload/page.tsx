@@ -9,10 +9,11 @@ export const dynamic = 'force-dynamic'
 const WRITE_ROLES: AppRole[] = ['admin', 'audit-officer', 'dept-head', 'ceo', 'risk-officer', 'compliance-officer']
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function AuditEvidenceUploadPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -22,10 +23,10 @@ export default async function AuditEvidenceUploadPage({ params }: PageProps) {
   const activeRole = appMeta?.active_role as AppRole | undefined
 
   if (!activeRole || !WRITE_ROLES.includes(activeRole)) {
-    redirect(`/audit/findings/${params.id}`)
+    redirect(`/audit/findings/${id}`)
   }
 
-  const { data, error } = await getAuditFindingById(supabase, params.id)
+  const { data, error } = await getAuditFindingById(supabase, id)
   if (error || !data) notFound()
 
   const finding = data as {

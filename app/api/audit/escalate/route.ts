@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { getAuditFindingsForEscalation } from '@/lib/audit/queries'
 import { sendAuditEscalationEmails } from '@/lib/audit/escalation'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   const secret = request.headers.get('x-cron-secret')
   if (!secret || secret !== process.env.CRON_SECRET) {

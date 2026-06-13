@@ -27,7 +27,7 @@ const VIEW_ROLES: AppRole[] = [
 ]
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type RiskDetail = {
@@ -54,6 +54,7 @@ type RiskTreatmentDetail = {
 }
 
 export default async function RiskDetailPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -67,8 +68,8 @@ export default async function RiskDetailPage({ params }: PageProps) {
   }
 
   const [riskResult, treatmentsResult] = await Promise.all([
-    getRiskById(supabase, params.id),
-    listRiskTreatments(supabase, params.id),
+    getRiskById(supabase, id),
+    listRiskTreatments(supabase, id),
   ])
 
   if (!riskResult.data) {

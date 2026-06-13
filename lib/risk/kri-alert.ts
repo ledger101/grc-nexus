@@ -18,7 +18,13 @@ function escapeHtml(str: string): string {
     .replace(/"/g, '&quot;')
 }
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resendKey = process.env.RESEND_API_KEY
+let resendInstance: Resend | null = null
+function getResend(): Resend | null {
+  if (!resendKey || resendKey === 're_xxxx' || resendKey === 're_test') return null
+  if (!resendInstance) resendInstance = new Resend(resendKey)
+  return resendInstance
+}
 
 interface KriBreach {
   id:          string
@@ -115,6 +121,8 @@ export async function sendKriBreachAlerts(): Promise<{ sent: number; skipped: nu
 <p>Please review this KRI immediately and take corrective action.</p>
 `
 
+    const resend = getResend()
+    if (!resend) { skipped++; continue }
     try {
       await resend.emails.send({
         from:    'GRC-Nexus Alerts <alerts@mail.grc-nexus.app>',

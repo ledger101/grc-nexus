@@ -17,10 +17,11 @@ const VIEW_ROLES: AppRole[] = [
 ]
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function AuditFindingDetailPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -34,8 +35,8 @@ export default async function AuditFindingDetailPage({ params }: PageProps) {
   }
 
   const [findingResult, evidenceResult] = await Promise.all([
-    getAuditFindingById(supabase, params.id),
-    listAuditFindingEvidence(supabase, params.id),
+    getAuditFindingById(supabase, id),
+    listAuditFindingEvidence(supabase, id),
   ])
 
   if (findingResult.error || !findingResult.data) {

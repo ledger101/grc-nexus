@@ -41,8 +41,9 @@ type KpiGridRow = {
 export default async function StrategicPage({
   searchParams,
 }: {
-  searchParams: Record<string, string>
+  searchParams: Promise<Record<string, string>>
 }) {
+  const params = await searchParams
   const supabase = await createClient()
   const {
     data: { user },
@@ -57,9 +58,9 @@ export default async function StrategicPage({
     redirect('/dashboard')
   }
 
-  const page = Math.max(1, parseInt(searchParams.page ?? '1', 10))
-  const statusFilter = searchParams.status ?? ''
-  const objectiveId = searchParams.objective ?? ''
+  const page = Math.max(1, parseInt(params.page ?? '1', 10))
+  const statusFilter = params.status ?? ''
+  const objectiveId = params.objective ?? ''
 
   const [kpisResult, objectivesResult] = await Promise.all([
     getKpisWithReadings(supabase, { page, objectiveId: objectiveId || undefined }),

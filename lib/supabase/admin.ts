@@ -4,11 +4,12 @@
 // Uses SUPABASE_SERVICE_ROLE_KEY — no NEXT_PUBLIC_ prefix by design.
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/supabase'
+import { getSupabaseServiceRoleKey, SUPABASE_URL } from '@/lib/supabase/config'
 
 export function createAdminClient() {
   return createSupabaseClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!, // NO NEXT_PUBLIC_ prefix — server only
+    SUPABASE_URL,
+    getSupabaseServiceRoleKey(), // NO NEXT_PUBLIC_ prefix — server only
     {
       auth: {
         autoRefreshToken: false,

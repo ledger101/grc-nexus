@@ -151,10 +151,7 @@ export async function selectRole(role: string) {
     app_metadata: { active_role: role },
   })
 
-  // 3. Refresh session so JWT claims update immediately (RESEARCH.md Pitfall 3)
-  await supabase.auth.refreshSession()
-
-  // 4. Insert role change audit event (AUTH-08)
+  // 3. Insert role change audit event (AUTH-08)
   try {
     await supabase.from('audit_events').insert({
       actor_id: user.id,
@@ -168,5 +165,6 @@ export async function selectRole(role: string) {
     // Non-fatal
   }
 
-  redirect('/dashboard')
+  // 4. Route through a handler so refreshed JWT claims are written to response cookies.
+  redirect('/api/auth/refresh?next=/dashboard')
 }

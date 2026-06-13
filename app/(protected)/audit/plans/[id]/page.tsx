@@ -58,10 +58,11 @@ type PlanDetail = {
 }
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function AuditPlanDetailPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -70,7 +71,7 @@ export default async function AuditPlanDetailPage({ params }: PageProps) {
   const activeRole = appMeta?.active_role as AppRole | undefined
   if (!activeRole || !VIEW_ROLES.includes(activeRole)) redirect('/dashboard')
 
-  const { data } = await getAuditPlanById(supabase, params.id)
+  const { data } = await getAuditPlanById(supabase, id)
   if (!data) notFound()
 
   const plan = data as unknown as PlanDetail

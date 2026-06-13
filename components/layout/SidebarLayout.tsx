@@ -107,13 +107,13 @@ export function SidebarLayout({ activeRole, children, notificationBell }: Sideba
     <div className="min-h-screen bg-paper">
       {/* Sidebar */}
       <nav
-        className={`fixed left-0 top-0 h-full bg-surface border-r border-paper-border flex flex-col py-6 shadow-card z-10 transition-all duration-300 ${
+        className={`fixed inset-y-0 left-0 flex max-h-screen flex-col overflow-hidden border-r border-paper-border bg-surface py-4 shadow-card transition-all duration-300 z-10 ${
           collapsed ? 'w-16 px-2' : 'w-[220px] px-4'
         }`}
       >
         {/* Logo + collapse toggle */}
         <div
-          className={`mb-8 flex items-center ${
+          className={`mb-4 flex items-center ${
             collapsed ? 'justify-center' : 'justify-between'
           }`}
         >
@@ -122,27 +122,33 @@ export function SidebarLayout({ activeRole, children, notificationBell }: Sideba
               GRC-Nexus
             </span>
           )}
-          <button
-            onClick={() => setCollapsed((c) => !c)}
-            className="p-1.5 rounded-[6px] text-navy-mid hover:bg-paper-border transition-colors flex-shrink-0"
-            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {collapsed ? (
-              <ChevronRight className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className="h-4 w-4" />
-            )}
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setCollapsed((c) => !c)}
+              className="p-1.5 rounded-[6px] text-navy-mid hover:bg-paper-border transition-colors flex-shrink-0"
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {collapsed ? (
+                <ChevronRight className="h-4 w-4" />
+              ) : (
+                <ChevronLeft className="h-4 w-4" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className={`mb-3 ${collapsed ? 'flex justify-center' : ''}`}>
+          <ThemeToggle collapsed={collapsed} />
         </div>
 
         {/* Nav items */}
-        <div className="flex flex-col gap-1 flex-1">
+        <div className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1">
           {visibleItems.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}
               href={href}
               title={collapsed ? label : undefined}
-              className={`py-2 rounded-[6px] text-[14px] font-medium text-navy-900 hover:bg-paper transition-colors flex items-center gap-2 ${
+              className={`rounded-[6px] py-1.5 text-[14px] font-medium text-navy-900 hover:bg-paper transition-colors flex items-center gap-2 ${
                 collapsed ? 'px-2 justify-center' : 'px-3'
               }`}
             >
@@ -152,10 +158,6 @@ export function SidebarLayout({ activeRole, children, notificationBell }: Sideba
           ))}
         </div>
 
-        {/* Theme toggle — pinned to bottom */}
-        <div className={`mt-4 pt-4 border-t border-paper-border ${collapsed ? 'flex justify-center' : ''}`}>
-          <ThemeToggle collapsed={collapsed} />
-        </div>
       </nav>
 
       {/* Main content — offset by sidebar width */}

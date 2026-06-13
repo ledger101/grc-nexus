@@ -17,7 +17,7 @@ import type { IndicatorStatus, IndicatorDirection, KpiFrequency } from '@/types/
 export const dynamic = 'force-dynamic'
 
 interface PageProps {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 type KciReadingRow = {
@@ -48,6 +48,7 @@ type KciDetailRow = {
 const VIEW_ROLES: AppRole[] = ['admin', 'ceo', 'risk-officer', 'audit-officer', 'board-member', 'dept-head']
 
 export default async function KciDetailPage({ params }: PageProps) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -57,7 +58,7 @@ export default async function KciDetailPage({ params }: PageProps) {
 
   if (!activeRole || !VIEW_ROLES.includes(activeRole)) redirect('/audit/kcis')
 
-  const { data } = await getKciById(supabase, params.id)
+  const { data } = await getKciById(supabase, id)
   if (!data) redirect('/audit/kcis')
 
   const kci      = data as unknown as KciDetailRow

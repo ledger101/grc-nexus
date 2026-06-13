@@ -15,6 +15,8 @@
 
 import { sendKciBreachAlerts } from '@/lib/audit/kci-alert'
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: Request) {
   // CRON_SECRET guard — FIRST operation before any DB query
   const secret = request.headers.get('x-cron-secret')

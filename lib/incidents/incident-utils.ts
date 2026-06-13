@@ -4,6 +4,7 @@ import { IncidentStatus } from '@/types/incidents'
  * Validates whether an incident can transition from currentStatus to nextStatus.
  * Path: new -> assigned -> in_investigation -> escalated -> closed
  * - Reassignment (same status or moving between assigned/in_investigation) is permitted.
+ * - Active cases may be closed once a valid resolution is supplied.
  * - Closed is a terminal state.
  */
 export function isValidIncidentStatusTransition(current: IncidentStatus, next: IncidentStatus): boolean {
@@ -11,11 +12,11 @@ export function isValidIncidentStatusTransition(current: IncidentStatus, next: I
 
   switch (current) {
     case 'new':
-      return next === 'assigned'
+      return next === 'assigned' || next === 'closed'
     case 'assigned':
-      return next === 'in_investigation'
+      return next === 'in_investigation' || next === 'closed'
     case 'in_investigation':
-      return next === 'assigned' || next === 'escalated'
+      return next === 'assigned' || next === 'escalated' || next === 'closed'
     case 'escalated':
       return next === 'in_investigation' || next === 'closed'
     case 'closed':

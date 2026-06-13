@@ -17,8 +17,9 @@ function escapeCSV(value: unknown): string {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { module: string } }
+  { params }: { params: Promise<{ module: string }> }
 ) {
+  const { module } = await params
   // 1. Auth
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -28,11 +29,11 @@ export async function GET(
   if (appMeta?.active_role !== 'admin') return new Response('Forbidden', { status: 403 })
 
   // 2. Allowlist validation (path traversal prevention)
-  if (!ALLOWED_MODULES.includes(params.module as AllowedModule)) {
+  if (!ALLOWED_MODULES.includes(module as AllowedModule)) {
     return new Response('Not Found', { status: 404 })
   }
 
-  const mod = params.module as AllowedModule
+  const mod = module as AllowedModule
   let csv = ''
   const filename = `grc-nexus-${mod}-${Date.now()}.csv`
 
