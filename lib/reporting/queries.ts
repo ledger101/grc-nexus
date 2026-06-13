@@ -99,10 +99,10 @@ export async function getExecutiveDashboardData(
     isModuleEnabled(filters.module, 'incidents')
       ? supabase
           .from('incident_cases')
-          .select('id, title, due_date, assigned_to, status')
-          .lt('due_date', today)
+          .select('id, title, sla_due_date, assigned_investigator_id, status')
+          .lt('sla_due_date', today)
           .not('status', 'in', '("closed","dismissed")')
-          .order('due_date', { ascending: true })
+          .order('sla_due_date', { ascending: true })
           .limit(10)
       : Promise.resolve({ data: [], error: null }),
   ])
@@ -128,8 +128,8 @@ export async function getExecutiveDashboardData(
       id: String((row as { id: string }).id),
       title: String((row as { title: string }).title),
       module: 'incidents' as const,
-      dueDate: String((row as { due_date: string }).due_date),
-      ownerId: ((row as { assigned_to: string | null }).assigned_to ?? null),
+      dueDate: String((row as { sla_due_date: string }).sla_due_date),
+      ownerId: ((row as { assigned_investigator_id: string | null }).assigned_investigator_id ?? null),
       status: String((row as { status: string }).status),
     }))),
   ]

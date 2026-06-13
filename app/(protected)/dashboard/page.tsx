@@ -13,6 +13,10 @@ import { KpiSummaryCard } from './KpiSummaryCard'
 import { OverdueActionsTable } from './OverdueActionsTable'
 import { ExportGovernanceReportButton } from './ExportGovernanceReportButton'
 import { getExecutiveDashboardData } from '@/lib/reporting/queries'
+import { getKriDashboardStats } from '@/lib/risk/kri-queries'
+import { getKciDashboardStats } from '@/lib/audit/kci-queries'
+import { DashboardRealtimeRefresh } from '@/components/dashboard/DashboardRealtimeRefresh'
+import { TraceabilityGraph } from '@/components/dashboard/TraceabilityGraph'
 import type { AppRole } from '@/types/auth'
 import { MFA_REQUIRED_ROLES } from '@/types/auth'
 
@@ -167,7 +171,7 @@ export default async function DashboardPage({
           <ExportGovernanceReportButton enabled={canExportGovernanceReport} />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-6">
           <KpiSummaryCard
             title="Objectives"
             value={executiveData.kpi.objectivesTotal}
@@ -187,6 +191,16 @@ export default async function DashboardPage({
             title="Open Incidents"
             value={executiveData.kpi.openIncidents}
             subtitle="Cases not yet closed"
+          />
+          <KpiSummaryCard
+            title="KRIs Breached"
+            value={kriStats.breached}
+            subtitle="Risk indicators breached"
+          />
+          <KpiSummaryCard
+            title="KCI Health"
+            value={kciStats.pct_on_track}
+            subtitle="% controls on track"
           />
         </div>
 
@@ -221,6 +235,16 @@ export default async function DashboardPage({
         </div>
 
         <OverdueActionsTable rows={executiveData.overdueActions} />
+
+        {/* Real-time dashboard refresh — subscribes to governance table changes */}
+        {institutionId && (
+          <DashboardRealtimeRefresh institutionId={institutionId} />
+        )}
+
+        {/* Traceability graph */}
+        <div className="mt-6">
+          <TraceabilityGraph institutionId={institutionId ?? ''} />
+        </div>
 
         {/* Admin quick links */}
         {activeRole === 'admin' && (

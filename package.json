@@ -13,7 +13,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:training-video": "playwright test --project=training-video"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

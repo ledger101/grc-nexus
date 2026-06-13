@@ -46,8 +46,7 @@ export async function getObligationById(supabase: DbClient, obligationId: string
     .select(`
       id, institution_id, framework, framework_reference,
       title, description, owner_id, due_date, status, created_by, created_at, updated_at,
-      user_profiles!owner_id ( first_name, last_name ),
-      user_profiles!created_by ( first_name, last_name )
+      user_profiles!owner_id ( first_name, last_name )
     `)
     .eq('id', obligationId)
     .single()

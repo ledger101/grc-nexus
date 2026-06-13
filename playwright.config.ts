@@ -16,10 +16,21 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'training-video',
+      testMatch: /.*training-video\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1440, height: 900 },
+        video: { mode: 'on', size: { width: 1440, height: 900 } },
+        launchOptions: { slowMo: 250 },
+      },
+    },
   ],
   webServer: {
     command: 'npm run dev',
-    url: 'http://localhost:3000',
+    url: 'http://localhost:3000/login',   // /login returns 200; root returns 307
     reuseExistingServer: !process.env.CI,
+    timeout: 60_000,
   },
 })

@@ -55,8 +55,7 @@ export async function getAuditFindingById(supabase: DbClient, findingId: string)
       closed_at,
       created_at,
       updated_at,
-      user_profiles!remediation_owner_id ( first_name, last_name ),
-      user_profiles!created_by ( first_name, last_name )
+      user_profiles!remediation_owner_id ( first_name, last_name )
     `)
     .eq('id', findingId)
     .single()
